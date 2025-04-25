@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 24 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="taiwan" transform="matrix(0.00813321,0,0,0.00813321,0.487992,1.25586)">
+        <g id="taiwan1" serif:id="taiwan">
+            <g id="taiwan2" serif:id="taiwan">
+                <rect id="rect3157" x="-60" y="-154.412" width="2929.94" height="1967.24" style="fill:rgb(237,85,101);"/>
+                <rect id="rect3159" x="-60" y="-154.412" width="1464.97" height="983.622" style="fill:rgb(71,88,169);"/>
+                <g id="g3192" transform="matrix(0.935694,0,0,0.935694,30.0166,-101.806)">
+                    <path id="four_rays" d="M218.23,129.202L179.96,272.715L141.69,129.202L179.96,-14.311M179.96,167.472L323.473,129.202L179.96,90.932L36.447,129.202" style="fill:rgb(245,247,250);fill-rule:nonzero;"/>
+                    <g id="use3162" transform="matrix(0.866025,0.5,-0.5,0.866025,88.7112,-72.6703)">
+                        <path d="M218.23,129.202L179.96,272.715L141.69,129.202L179.96,-14.311M179.96,167.472L323.473,129.202L179.96,90.932L36.447,129.202" style="fill:rgb(245,247,250);fill-rule:nonzero;"/>
+                    </g>
+                    <g id="use3164" transform="matrix(0.5,0.866025,-0.866025,0.5,201.872,-91.249)">
+                        <path d="M218.23,129.202L179.96,272.715L141.69,129.202L179.96,-14.311M179.96,167.472L323.473,129.202L179.96,90.932L36.447,129.202" style="fill:rgb(245,247,250);fill-rule:nonzero;"/>
+                    </g>
+                    <circle id="circle3166" cx="179.96" cy="129.202" r="81.324" style="fill:rgb(71,88,169);"/>
+                    <circle id="circle3168" cx="179.96" cy="129.202" r="71.757" style="fill:rgb(245,247,250);"/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

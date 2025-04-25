@@ -1,0 +1,15 @@
+{
+	"autodeskProduct":	"Fusion",
+	"type":	"addin",
+	"author":	"",
+	"description":	{
+		"":	""
+	},
+	"supportedOS":	"windows|mac",
+	"version":	"",
+	"editEnabled":	true,
+	"iconFilename":	"AddInIcon.svg",
+	"runOnStartup":	false,
+	"sourcewindows":	"ImplicateXFusionToolsAddIn.vcxproj",
+	"sourcemac":	"ImplicateXFusionToolsAddIn.xcodeproj"
+}

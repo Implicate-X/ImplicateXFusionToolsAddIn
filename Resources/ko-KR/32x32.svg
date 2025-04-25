@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 48 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;">
+    <g id="korea_south" transform="matrix(0.666667,0,0,0.666667,24,16)">
+        <rect id="rect10496" x="-36" y="-24" width="71.489" height="48" style="fill:rgb(245,247,250);"/>
+        <g id="g10508" transform="matrix(0.5547,-0.83205,0.83205,0.5547,-0.255318,3.63795e-09)">
+            <g id="b2">
+                <path id="b-55" d="M-6,-25L6,-25M-6,-22L6,-22M-6,-19L6,-19" style="fill-rule:nonzero;stroke:rgb(67,74,84);stroke-width:2px;"/>
+                <g id="use10499" transform="matrix(1,0,0,1,0,44)">
+                    <path d="M-6,-25L6,-25M-6,-22L6,-22M-6,-19L6,-19" style="fill-rule:nonzero;stroke:rgb(67,74,84);stroke-width:2px;"/>
+                </g>
+            </g>
+            <path id="path10502" d="M0,17L0,27" style="fill:none;fill-rule:nonzero;stroke:rgb(245,247,250);stroke-width:1px;"/>
+            <circle id="circle10504" cx="0" cy="0" r="12" style="fill:rgb(237,85,101);"/>
+            <path id="path10506" d="M0,-12C-3.292,-12 -6,-9.292 -6,-6C-6,-2.708 -3.292,0 0,0C3.292,-0 6,2.708 6,6C6,9.292 3.292,12 0,12C-6.583,12 -12,6.583 -12,0C-12,-6.583 -6.583,-12 -0,-12Z" style="fill:rgb(71,88,169);fill-rule:nonzero;"/>
+        </g>
+        <g id="g10514" transform="matrix(-0.5547,-0.83205,0.83205,-0.5547,-0.255318,8.93975e-09)">
+            <g id="use10510">
+                <path id="b-551" serif:id="b-55" d="M-6,-25L6,-25M-6,-22L6,-22M-6,-19L6,-19" style="fill-rule:nonzero;stroke:rgb(67,74,84);stroke-width:2px;"/>
+                <g id="use104991" serif:id="use10499" transform="matrix(1,0,0,1,0,44)">
+                    <path d="M-6,-25L6,-25M-6,-22L6,-22M-6,-19L6,-19" style="fill-rule:nonzero;stroke:rgb(67,74,84);stroke-width:2px;"/>
+                </g>
+            </g>
+            <path id="path10512" d="M0,-23.5L0,-20.5M0,17L0,20.5M0,23.5L0,26.5" style="fill-rule:nonzero;stroke:rgb(245,247,250);stroke-width:1px;"/>
+        </g>
+    </g>
+</svg>
