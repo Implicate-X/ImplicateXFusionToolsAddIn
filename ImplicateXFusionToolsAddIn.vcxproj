@@ -107,7 +107,7 @@
     <ClCompile Include="ImplicateXFusionToolsAddIn.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
     </ClCompile>
-    <ClCompile Include="ImplicateXToolsCommandControl.cpp">
+    <ClCompile Include="ToolsCommandControl.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
     </ClCompile>
     <ClCompile Include="LanguageDropDownControl.cpp">
@@ -118,6 +118,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.h</PrecompiledHeaderFile>
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
     </ClCompile>
+    <ClCompile Include="ResourceHelper.cpp" />
     <ClCompile Include="SketchTextCommandControl.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
     </ClCompile>
@@ -139,11 +140,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImplicateXFusionToolsAddIn.h" />
-    <ClInclude Include="ImplicateXToolsCommandControl.h" />
+    <ClInclude Include="ToolsCommandControl.h" />
     <ClInclude Include="LanguageDropDownControl.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PrebuildMacros.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="ResourceHelper.h" />
     <ClInclude Include="SketchTextCommandControl.h" />
     <ClInclude Include="ToolsApp.h" />
     <ClInclude Include="ToolsBar.h" />

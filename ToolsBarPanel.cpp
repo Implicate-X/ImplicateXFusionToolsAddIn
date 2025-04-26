@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "resource.h"
 #include "ImplicateXFusionToolsAddIn.h"
-#include "ImplicateXToolsCommandControl.h"
+#include "ResourceHelper.h"
+#include "ToolsCommandControl.h"
 #include "LanguageDropDownControl.h"
 #include "SketchTextCommandControl.h"
 #include "ToolsBarPanel.h"
@@ -11,7 +12,7 @@
 namespace implicatex {
 	namespace fusion {
 		/// <summary>
-		/// <para>The initialize function sets up the toolbar panel by terminating any existing processes</para>
+		/// <para>The initialize function sets up the toolbar panel by terminating any existing processes </para>
 		/// <para>and adding necessary controls, returning true if successful or false if any additions fail.</para>
 		/// </summary>
 		///
@@ -19,12 +20,12 @@ namespace implicatex {
 		bool ToolsBarPanel::initialize() {
 			terminate();
 
-			if (!AddImplicateXCommandControl()) {
-				Application::log("Failed to add Implicate-X CommandControl.");
+			if (!addToolsCommandControl()) {
+				Application::log("Failed to add Tools CommandControl.");
 				return false;
 			}
 
-			if (!AddLanguageSelector()) {
+			if (!addLanguageSelector()) {
 				Application::log("Failed to add Language Selector.");
 				return false;
 			}
@@ -33,8 +34,8 @@ namespace implicatex {
 		}
 
 		/// <summary>
-		/// <para>The terminate function is responsible for cleaning up and deleting specific command definitions</para>
-		/// <para>related to region selections and the ImplicateX command from the user interface.</para>
+		/// <para>The terminate function is responsible for cleaning up and deleting specific command definitions </para>
+		/// <para>related to region selections and the Tools command from the user interface.</para>
 		/// </summary>
 		void ToolsBarPanel::terminate() {
 			if (gUi) {
@@ -47,6 +48,13 @@ namespace implicatex {
 			}
 		}
 
+		/// <summary>
+		/// <para>The terminateLanguageSelector function is for safely terminating and deleting </para>
+		/// <para>the language selector command and its associated dropdown control, </para>
+		/// <para>logging any failures encountered during the process.</para>
+		/// </summary>
+		///
+		/// <returns>True if it succeeds, false if it fails.</returns>
 		bool ToolsBarPanel::terminateLanguageSelector() {
 			Ptr<CommandDefinition> commandDef = gUi->commandDefinitions()->itemById(IDS_CMD_LANG_SELECTOR);
 			if (commandDef) {
@@ -72,55 +80,55 @@ namespace implicatex {
 		}
 
 		/// <summary>
-		/// <para>The AddImplicateXCommandControl function is responsible for adding a command control</para>
-		/// <para>for the Implicate-X tool to the toolbar, ensuring that the necessary command definitions</para>
+		/// <para>The addToolsCommandControl function is responsible for adding a command control </para>
+		/// <para>for the Implicate-X tool to the toolbar, ensuring that the necessary command definitions </para>
 		/// <para>and controls are successfully created and initialized.</para>
 		/// </summary>
 		///
 		/// <returns>True if it succeeds, false if it fails.</returns>
-		bool ToolsBarPanel::AddImplicateXCommandControl() {
+		bool ToolsBarPanel::addToolsCommandControl() {
             Ptr<ToolbarControls> controls = this->controls();
             if (!controls) {
                 Application::log("Failed to retrieve ToolbarControls.");
                 return false;
             }
 
-            Ptr<CommandDefinition> implicateXCommandDef = 
+            Ptr<CommandDefinition> toolsCommandDef = 
             gUi->commandDefinitions()->addButtonDefinition(IDS_CMD_IMPLICATEX,
                 LoadStringFromResource(IDS_CMD_NAME_IMPLICATEX),
 				LoadStringFromResource(IDS_CMD_NAME_IMPLICATEX),
                 IDS_ID_TOOLS_RES);
 
-            if (!implicateXCommandDef) {
-                Application::log("Failed to add CommandDefinition for Implicate-X Tools.");
+            if (!toolsCommandDef) {
+                Application::log("Failed to add CommandDefinition for Tools.");
                 return false;
             }
 
-            Ptr<ImplicateXToolsCommandControl> implicateXCommandControl = controls->addCommand(implicateXCommandDef, "", false);
-            if (!implicateXCommandControl) {
+            Ptr<ToolsCommandControl> toolsCommandControl = controls->addCommand(toolsCommandDef, "", false);
+            if (!toolsCommandControl) {
                 Application::log("Failed to add CommandControl for Implicate-X Tools.");
                 return false;
             }
 
-            if (!implicateXCommandControl) {
+            if (!toolsCommandControl) {
                 Application::log("Failed to create CommandControl for Implicate-X Tools.");
                 return false;
             }
 
-            if (!implicateXCommandControl->initialize()) {
+            if (!toolsCommandControl->initialize()) {
                 return false;
             }
 
             return true;
 		}
 
-        /// <summary><para>The AddLanguageSelector function is responsible for creating a dropdown menu</para>
-        /// 		 <para>for selecting countries, populating it with command buttons for each
-        /// 		 region,</para>
-        /// 		 <para>and logging any failures encountered during the process.</para></summary>
+        /// <summary>
+        /// <para>The addLanguageSelector function is responsible for creating a dropdown menu </para>
+        /// <para>for selecting countries, populating it with command buttons for each region, </para>
+        /// <para>and logging any failures encountered during the process.</para></summary>
         ///
         /// <returns>True if it succeeds, false if it fails.</returns>
-        bool ToolsBarPanel::AddLanguageSelector() {
+        bool ToolsBarPanel::addLanguageSelector() {
             Ptr<ToolbarControls> controls = this->controls();
             if (!controls) {
                 Application::log("Failed to retrieve ToolbarControls.");
@@ -146,8 +154,8 @@ namespace implicatex {
         }
 
 		/// <summary>
-		/// <para>The notify method in the LanguageCommandCreatedEventHandler class is an overridden virtual function</para>
-		/// <para>that handles the event when a language command is created, logging a message with the selected language.</para>
+		/// <para>The notify method is an overridden virtual function that handles the event </para>
+		/// <para>when a language command is created, logging a message with the selected language.</para>
 		/// </summary>
 		///
 		/// <param name="eventArgs">The event arguments.</param>
@@ -177,7 +185,7 @@ namespace implicatex {
 					return;
 				}
 				gLocaleId = tempLocaleId.c_str();
-				if (!toolsBarPanel->AddLanguageSelector()) {
+				if (!toolsBarPanel->addLanguageSelector()) {
 					Application::log("Failed to add LanguageDropDownControl.");
 					return;
 				}

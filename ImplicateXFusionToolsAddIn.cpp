@@ -3,6 +3,7 @@
 #include "ImplicateXFusionToolsAddIn.h"
 #include "ToolsBar.h"
 #include "ToolsApp.h"
+#include <Windows.h>
 
 namespace implicatex {
     namespace fusion {

@@ -17,6 +17,7 @@ namespace implicatex {
 		/// <para>which stores a mapping of command definitions to their corresponding integer counters using a std::map.</para>
 		/// <para>This map is used to keep track of the number of command definitions created for each language.</para>
 		/// </summary>
+		/// 
 		std::map<std::string, int> LanguageDropDownControl::commandDefCounters_;
 
 
@@ -25,6 +26,7 @@ namespace implicatex {
 		/// <para>to LanguageCommandCreatedEventHandler objects within the implicatex::fusion namespace,</para>
 		/// <para>likely used to manage event handlers for language command creation events.</para>
 		/// </summary>
+		/// 
 		std::map<std::string, LanguageCommandCreatedEventHandler*> eventHandlers;
 
 		/// <summary>
@@ -33,6 +35,7 @@ namespace implicatex {
 		/// <para>and logging any failures encountered during the process.</para></summary>
 		///
 		/// <returns>True if it succeeds, false if it fails.</returns>
+		/// 
 		bool LanguageDropDownControl::initialize(bool doTerminate) {
 			initializeCommandDefCounters();
 			if (doTerminate) {
@@ -82,6 +85,7 @@ namespace implicatex {
 		/// <para>The terminate function is responsible for deleting command definitions associated</para>
 		/// <para>with region commands based on the current locale in the user interface.</para>
 		/// </summary>
+		/// 
 		void LanguageDropDownControl::terminate() {
 			if (gUi) {
 				std::vector<std::pair<std::string, std::string>> sortedLocaleLanguageRegionList;
@@ -124,6 +128,7 @@ namespace implicatex {
 		/// </param>
 		///
 		/// <returns>The unique command identifier.</returns>
+		/// 
 		std::string LanguageDropDownControl::generateUniqueCommandId(const std::string& localeId) {
 			int counter = commandDefCounters_[localeId]+1;
 			commandDefCounters_[localeId] = ++counter;
@@ -139,6 +144,7 @@ namespace implicatex {
 		/// 					   locale in a program.</para></param>
 		///
 		/// <returns>The current command identifier.</returns>
+		/// 
 		std::string LanguageDropDownControl::getCurrentCommandId(const std::string& localeId) {
 			int counter = commandDefCounters_[localeId];
 			return "LanguageCmd_" + localeId + "_" + std::to_string(counter);
@@ -148,6 +154,7 @@ namespace implicatex {
 		/// <para>The initializeCommandDefCounters function initializes a map of command definition counters</para>
 		/// <para>for various languages, setting their initial values to zero if the map is empty.</para>
 		/// </summary>
+		/// 
 		void LanguageDropDownControl::initializeCommandDefCounters() {
 			if (commandDefCounters_.empty()) {
 				commandDefCounters_.insert({ "zh-CN", 0 });

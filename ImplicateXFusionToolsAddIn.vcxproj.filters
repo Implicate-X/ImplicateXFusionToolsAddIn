@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="ResourceHelper.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ImplicateXFusionToolsAddIn.cpp">
+      <Filter>AddIn</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolsCommandControl.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolsApp.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolsBar.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolsBarPanel.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="SketchTextCommandControl.cpp">
+      <Filter>Sketch</Filter>
+    </ClCompile>
+    <ClCompile Include="LanguageDropDownControl.cpp">
+      <Filter>Language</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceHelper.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ImplicateXFusionToolsAddIn.h">
+      <Filter>AddIn</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolsCommandControl.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolsApp.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolsBar.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolsBarPanel.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="SketchTextCommandControl.h">
+      <Filter>Sketch</Filter>
+    </ClInclude>
+    <ClInclude Include="LanguageDropDownControl.h">
+      <Filter>Language</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PrebuildMacros.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{6317d570-a960-4cc9-9414-1b246264fc26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AddIn">
+      <UniqueIdentifier>{31b18baf-a488-4272-ba8f-ec7b6bd018d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tools">
+      <UniqueIdentifier>{126ec572-ca76-4299-93ea-476e1f197172}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketch">
+      <UniqueIdentifier>{4d05f090-02ad-4a01-8153-20a174b95845}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Language">
+      <UniqueIdentifier>{923fcfae-b575-41bb-8365-23771fdbf74e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{8e885c9a-eed4-453d-972f-48e7b7fb8336}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ImplicateXFusionToolsAddIn.manifest">
+      <Filter>AddIn</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ToolsAddIn.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

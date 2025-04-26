@@ -6,7 +6,7 @@ using namespace adsk::cam;
 
 namespace implicatex {  
 namespace fusion {  
-	class ImplicateXToolsCommandControl :  
+	class ToolsCommandControl :  
 		public CommandControl
 	{  
 	public:

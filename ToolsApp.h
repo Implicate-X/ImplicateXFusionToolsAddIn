@@ -9,15 +9,22 @@ using namespace icu;
 namespace implicatex {
 	namespace fusion {
 		/// <summary>
-		/// <para>The ToolsApp class in the implicatex::fusion namespace is designed to manage text definition settings in sketches,</para>
-		/// <para>providing methods for initialization, termination, panel creation, and removal.</para>
+		/// <para>The ToolsApp class in the implicatex::fusion namespace is designed to manage the initialization,</para>
+		/// <para>termination, and user interface components of the Implicate-X tools application, </para>
+		/// <para>including handling locale-specific language settings.</para>
 		/// </summary>
 		class ToolsApp :
 			public Application
 		{
 		public:
-			static std::unique_ptr<ToolsBar> toolsBar;
-			static std::map<UserLanguages, std::string> LocaleIdMap;
+			/// <summary>
+			/// <para>sToolsBar is a static member of the ToolsApp class, which holds a unique pointer to a ToolsBar object,</para>
+			/// <para> ensuring exclusive ownership and automatic memory management.</para>
+			/// </summary>
+			static std::unique_ptr<ToolsBar> sToolsBar;
+
+			/// <summary>The locale identifier map.</summary>
+			static std::map<UserLanguages, std::string> sLocaleIdMap;
 
 			/// <summary>
 			/// <para>The ToolsApp::initialize() function initializes the Implicate-X tools application</para>
