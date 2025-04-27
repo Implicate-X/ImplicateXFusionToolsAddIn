@@ -60,7 +60,7 @@ namespace implicatex {
 							continue;
 						}
 					}
-					commandDef = gUi->commandDefinitions()->addButtonDefinition(commandId.c_str(), commandName.c_str(), commandDescription.c_str(), "Resources/" + locale);
+					commandDef = gUi->commandDefinitions()->addButtonDefinition(commandId.c_str(), commandName.c_str(), commandDescription.c_str(), IDS_SUBDIR_FLAGS + locale);
 					if (!commandDef) {
 						Application::log("Failed to add CommandDefinition for " + commandId);
 						continue;

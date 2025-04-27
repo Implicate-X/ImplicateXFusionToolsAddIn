@@ -8,20 +8,13 @@ using namespace icu;
 
 namespace implicatex {
     namespace fusion {
+        /// <summary>The gApp symbol is a pointer to the ToolsApp class, which serves as the main application object.</summary>
         extern Ptr<ToolsApp> gApp;
+
+		/// <summary>gUi symbol is a pointer to the UserInterface class, which provides access to the user interface elements.</summary>
         extern Ptr<UserInterface> gUi;
 
         /// <summary>LocaleID holds the default locale identifier, initialized to "en-US" for English (Unites States).</summary>
         extern std::string gLocaleId;
-
-		const std::string IDS_SUBDIR_RESOURCES = "Resources/"; // Resources/
-		const std::string IDS_ID_SOLID_ENV = "FusionSolidEnvironment"; // FusionSolidEnvironment
-		const std::string IDS_ID_TOOLS_BAR = "ImplicateXFusionToolsAddInBar"; // ImplicateXFusionToolsAddInBar
-		const std::string IDS_ID_TOOLS_RES = "Resources/logo"; // Resources/logo
-		const std::string IDS_NAME_TOOLS_BAR = "Implicate-X"; // Implicate-X
-		const std::string IDS_CMD_IMPLICATEX = "ImplicateXFusionToolsCommand"; // ImplicateXFusionToolsCommand
-		const std::string IDS_ID_LANG_SELECTOR = "LanguageDropDownControl"; // LanguageDropDownControl
-		const std::string IDS_CMD_LANG_SELECTOR = "LanguageDropDownCommand"; // LanguageDropDownCommand
-
     }
 }

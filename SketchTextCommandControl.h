@@ -5,12 +5,12 @@ using namespace adsk::fusion;
 using namespace adsk::cam;
 
 namespace implicatex {  
-namespace fusion {  
-	class SketchTextCommandControl :  
-		public CommandControl  
-	{  
-	public:
-		bool initialize();
-	};  
-}  
+	namespace fusion {
+		class SketchTextCommandControl :  
+			public CommandControl  
+		{  
+		public:
+			bool initialize();
+		};  
+	}  
 }

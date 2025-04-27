@@ -24,6 +24,11 @@ namespace implicatex {
 				Application::log("Failed to add Tools CommandControl.");
 				return false;
 			}
+			
+			if (!addSketchTextCommandControl()) {
+				Application::log("Failed to add Sketch Text CommandControl.");
+				return false;
+			}
 
 			if (!addLanguageSelector()) {
 				Application::log("Failed to add Language Selector.");
@@ -39,9 +44,10 @@ namespace implicatex {
 		/// </summary>
 		void ToolsBarPanel::terminate() {
 			if (gUi) {
-				terminateLanguageSelector();
+				removeLanguageSelector();
+				removeSketchTextCommandControl();
 
-				Ptr<CommandDefinition> implicateXCommandDef = gUi->commandDefinitions()->itemById(IDS_CMD_IMPLICATEX);
+				Ptr<CommandDefinition> implicateXCommandDef = gUi->commandDefinitions()->itemById(IDS_CMD_IMPLICATEX_TOOLS);
 				if (implicateXCommandDef) {
 					implicateXCommandDef->deleteMe();
 				}
@@ -49,13 +55,159 @@ namespace implicatex {
 		}
 
 		/// <summary>
-		/// <para>The terminateLanguageSelector function is for safely terminating and deleting </para>
+		/// <para>The addToolsCommandControl function is responsible for adding a command control </para>
+		/// <para>for the Implicate-X tool to the toolbar, ensuring that the necessary command definitions </para>
+		/// <para>and controls are successfully created and initialized.</para>
+		/// </summary>
+		///
+		/// <returns>True if it succeeds, false if it fails.</returns>
+		bool ToolsBarPanel::addToolsCommandControl() {
+            Ptr<ToolbarControls> controls = this->controls();
+            if (!controls) {
+                Application::log("Failed to retrieve ToolbarControls.");
+                return false;
+            }
+
+			std::string buttonName = LoadStringFromResource(IDS_CMD_NAME_IMPLICATEX);
+
+            Ptr<CommandDefinition> implicateXCommandDef = 
+            gUi->commandDefinitions()->addButtonDefinition(IDS_CMD_IMPLICATEX_TOOLS, buttonName, buttonName, IDS_SUBDIR_LOGO);
+
+            if (!implicateXCommandDef) {
+                Application::log("Failed to add CommandDefinition for Tools.");
+                return false;
+            }
+
+            Ptr<ToolsCommandControl> implicateXCommandControl = controls->addCommand(implicateXCommandDef, "", false);
+            if (!implicateXCommandControl) {
+                Application::log("Failed to add CommandControl for Implicate-X Tools.");
+                return false;
+            }
+
+            if (!implicateXCommandControl) {
+                Application::log("Failed to create CommandControl for Implicate-X Tools.");
+                return false;
+            }
+
+            if (!implicateXCommandControl->initialize()) {
+                return false;
+            }
+
+            return true;
+		}
+
+		/// <summary>
+		/// <para></para>
+		/// </summary>
+		///
+		/// <returns>True if it succeeds, false if it fails.</returns>
+		bool ToolsBarPanel::addSketchTextCommandControl() {
+            Ptr<ToolbarControls> controls = this->controls();
+            if (!controls) {
+                Application::log("Failed to retrieve ToolbarControls.");
+                return false;
+            }
+
+			std::string buttonLabel = LoadStringFromResource(IDS_LABEL_SKETCHTEXT);
+
+            Ptr<CommandDefinition> sketchTextCommandDef = 
+            gUi->commandDefinitions()->addButtonDefinition(IDS_CMD_SKETCHTEXT, buttonLabel, buttonLabel, IDS_SUBDIR_SKETCHTEXT);
+
+            if (!sketchTextCommandDef) {
+                Application::log("Failed to add CommandDefinition for Sketch text definitions.");
+                return false;
+            }
+
+            Ptr<SketchTextCommandControl> sketchTextCommandControl = controls->addCommand(sketchTextCommandDef, "", false);
+            if (!sketchTextCommandControl) {
+                Application::log("Failed to add CommandControl for Sketch text definitions.");
+                return false;
+            }
+
+            if (!sketchTextCommandControl) {
+                Application::log("Failed to create CommandControl for Sketch text definitions.");
+                return false;
+            }
+
+            if (!sketchTextCommandControl->initialize()) {
+                return false;
+            }
+
+            return true;
+		}
+
+		/// <summary>
+		/// <para></para>
+		/// </summary>
+		///
+		/// <returns>True if it succeeds, false if it fails.</returns>
+		bool ToolsBarPanel::removeSketchTextCommandControl() {
+			if (gUi)
+			{
+				Ptr<CommandDefinition> sketchTextCommandDef = gUi->commandDefinitions()->itemById(IDS_CMD_SKETCHTEXT);
+				if (sketchTextCommandDef) {
+					sketchTextCommandDef->deleteMe();
+				}
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// <para></para>
+		/// </summary>
+		///
+		/// <returns>True if it succeeds, false if it fails.</returns>
+		bool ToolsBarPanel::updateSketchTextCommandControlLabel() {
+			if (gUi)
+			{
+				std::string controlLabel = LoadStringFromResource(IDS_LABEL_SKETCHTEXT);
+
+				Ptr<CommandDefinition> sketchTextCommandDef = gUi->commandDefinitions()->itemById(IDS_CMD_SKETCHTEXT);
+				if (sketchTextCommandDef) {
+					sketchTextCommandDef->controlDefinition()->name(controlLabel);
+				}
+			}
+			return true;
+		}
+
+        /// <summary>
+        /// <para>The addLanguageSelector function is responsible for creating a dropdown menu </para>
+        /// <para>for selecting countries, populating it with command buttons for each region, </para>
+        /// <para>and logging any failures encountered during the process.</para></summary>
+        ///
+        /// <returns>True if it succeeds, false if it fails.</returns>
+        bool ToolsBarPanel::addLanguageSelector() {
+            Ptr<ToolbarControls> controls = this->controls();
+            if (!controls) {
+                Application::log("Failed to retrieve ToolbarControls.");
+                return false;
+            }
+
+			std::string itemText = "   " + LoadStringFromResource(IDS_LABEL_SELECT_LANGUAGE);
+
+			Ptr<LanguageDropDownControl> languageDropDown = 
+				controls->addDropDown(itemText, IDS_SUBDIR_FLAGS + gLocaleId, IDS_ID_LANG_SELECTOR);
+
+			if (!languageDropDown) {
+				Application::log("Failed to create DropDownControl.");
+				return false;
+			}
+
+			if (!languageDropDown->initialize()) {
+				return false;
+			}
+			
+			return true;
+        }
+
+		/// <summary>
+		/// <para>The removeLanguageSelector function is for safely removing </para>
 		/// <para>the language selector command and its associated dropdown control, </para>
 		/// <para>logging any failures encountered during the process.</para>
 		/// </summary>
 		///
 		/// <returns>True if it succeeds, false if it fails.</returns>
-		bool ToolsBarPanel::terminateLanguageSelector() {
+		bool ToolsBarPanel::removeLanguageSelector() {
 			Ptr<CommandDefinition> commandDef = gUi->commandDefinitions()->itemById(IDS_CMD_LANG_SELECTOR);
 			if (commandDef) {
 				if (!commandDef->deleteMe()) {
@@ -78,80 +230,6 @@ namespace implicatex {
 
 			return true;
 		}
-
-		/// <summary>
-		/// <para>The addToolsCommandControl function is responsible for adding a command control </para>
-		/// <para>for the Implicate-X tool to the toolbar, ensuring that the necessary command definitions </para>
-		/// <para>and controls are successfully created and initialized.</para>
-		/// </summary>
-		///
-		/// <returns>True if it succeeds, false if it fails.</returns>
-		bool ToolsBarPanel::addToolsCommandControl() {
-            Ptr<ToolbarControls> controls = this->controls();
-            if (!controls) {
-                Application::log("Failed to retrieve ToolbarControls.");
-                return false;
-            }
-
-            Ptr<CommandDefinition> toolsCommandDef = 
-            gUi->commandDefinitions()->addButtonDefinition(IDS_CMD_IMPLICATEX,
-                LoadStringFromResource(IDS_CMD_NAME_IMPLICATEX),
-				LoadStringFromResource(IDS_CMD_NAME_IMPLICATEX),
-                IDS_ID_TOOLS_RES);
-
-            if (!toolsCommandDef) {
-                Application::log("Failed to add CommandDefinition for Tools.");
-                return false;
-            }
-
-            Ptr<ToolsCommandControl> toolsCommandControl = controls->addCommand(toolsCommandDef, "", false);
-            if (!toolsCommandControl) {
-                Application::log("Failed to add CommandControl for Implicate-X Tools.");
-                return false;
-            }
-
-            if (!toolsCommandControl) {
-                Application::log("Failed to create CommandControl for Implicate-X Tools.");
-                return false;
-            }
-
-            if (!toolsCommandControl->initialize()) {
-                return false;
-            }
-
-            return true;
-		}
-
-        /// <summary>
-        /// <para>The addLanguageSelector function is responsible for creating a dropdown menu </para>
-        /// <para>for selecting countries, populating it with command buttons for each region, </para>
-        /// <para>and logging any failures encountered during the process.</para></summary>
-        ///
-        /// <returns>True if it succeeds, false if it fails.</returns>
-        bool ToolsBarPanel::addLanguageSelector() {
-            Ptr<ToolbarControls> controls = this->controls();
-            if (!controls) {
-                Application::log("Failed to retrieve ToolbarControls.");
-                return false;
-            }
-
-			Ptr<LanguageDropDownControl> languageDropDown = controls->addDropDown(
-                "   " + LoadStringFromResource(IDS_LABEL_SELECT_LANGUAGE),
-                IDS_SUBDIR_RESOURCES + gLocaleId,
-                IDS_ID_LANG_SELECTOR
-            );
-
-			if (!languageDropDown) {
-				Application::log("Failed to create DropDownControl.");
-				return false;
-			}
-
-			if (!languageDropDown->initialize()) {
-				return false;
-			}
-			
-			return true;
-        }
 
 		/// <summary>
 		/// <para>The notify method is an overridden virtual function that handles the event </para>
@@ -180,7 +258,7 @@ namespace implicatex {
 				std::string tempLocaleId = localeId_;
                 std::replace(tempLocaleId.begin(), tempLocaleId.end(), '_', '-');
 
-				if (!toolsBarPanel->terminateLanguageSelector()) {
+				if (!toolsBarPanel->removeLanguageSelector()) {
 					Application::log("Failed to terminate LanguageDropDownControl.");
 					return;
 				}
@@ -189,6 +267,8 @@ namespace implicatex {
 					Application::log("Failed to add LanguageDropDownControl.");
 					return;
 				}
+
+				toolsBarPanel->updateSketchTextCommandControlLabel();
 			}
 		}
 	}

@@ -63,6 +63,9 @@
     <ClInclude Include="PrebuildMacros.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="Symbols.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resources">

@@ -2,7 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by ToolsAddIn.rc
 //
-#define IDS_PANEL_TITLE                 2002
+#define IDS_LABEL_SKETCHTEXT            2002
 #define IDS_ERR_CREATE_BAR              2004
 #define IDS_ERR_REMOVE_BAR              2005
 #define IDS_MSG_APP_INITIALIZED         2006

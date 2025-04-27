@@ -140,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImplicateXFusionToolsAddIn.h" />
+    <ClInclude Include="Symbols.h" />
     <ClInclude Include="ToolsCommandControl.h" />
     <ClInclude Include="LanguageDropDownControl.h" />
     <ClInclude Include="pch.h" />

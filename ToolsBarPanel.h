@@ -50,15 +50,6 @@ namespace implicatex {
             void terminate();
 
 			/// <summary>
-			/// <para>The terminateLanguageSelector function is for safely terminating and deleting </para>
-			/// <para>the language selector command and its associated dropdown control, </para>
-			/// <para>logging any failures encountered during the process.</para>
-			/// </summary>
-			///
-			/// <returns>True if it succeeds, false if it fails.</returns>
-			bool terminateLanguageSelector();
-
-			/// <summary>
 			/// <para>The addToolsCommandControl function is responsible for adding a command control </para>
 			/// <para>for the Implicate-X tool to the toolbar, ensuring that the necessary command definitions </para>
 			/// <para>and controls are successfully created and initialized.</para>
@@ -68,12 +59,42 @@ namespace implicatex {
 			bool addToolsCommandControl();
 
 			/// <summary>
+			/// <para></para>
+			/// </summary>
+			///
+			/// <returns>True if it succeeds, false if it fails.</returns>
+			bool addSketchTextCommandControl();
+
+			/// <summary>
+			/// <para></para>
+			/// </summary>
+			///
+			/// <returns>True if it succeeds, false if it fails.</returns>
+			bool removeSketchTextCommandControl();
+
+			/// <summary>
+			/// <para></para>
+			/// </summary>
+			///
+			/// <returns>True if it succeeds, false if it fails.</returns>
+			bool updateSketchTextCommandControlLabel();
+
+			/// <summary>
 			/// <para>The addLanguageSelector function is responsible for creating a dropdown menu </para>
 			/// <para>for selecting countries, populating it with command buttons for each region, </para>
 			/// <para>and logging any failures encountered during the process.</para></summary>
 			///
 			/// <returns>True if it succeeds, false if it fails.</returns>
             bool addLanguageSelector();
+
+			/// <summary>
+			/// <para>The removeLanguageSelector function is for safely removing </para>
+			/// <para>the language selector command and its associated dropdown control, </para>
+			/// <para>logging any failures encountered during the process.</para>
+			/// </summary>
+			///
+			/// <returns>True if it succeeds, false if it fails.</returns>
+			bool removeLanguageSelector();
         };
     }
 }
