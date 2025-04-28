@@ -7,10 +7,10 @@
 
 namespace implicatex {
     namespace fusion {
-        Ptr<ToolsApp> gApp = nullptr;
-        Ptr<UserInterface> gUi = nullptr;
+        Ptr<ToolsApp> toolsApp = nullptr;
+        Ptr<UserInterface> toolsUI = nullptr;
 
-		std::string gLocaleId = "en-US";
+		std::string toolsLocaleId = "en-US";
 
         /// <summary>
         /// <para>The implicatex::fusion::run function initializes the application and its user interface,</para>
@@ -25,17 +25,17 @@ namespace implicatex {
         /// <returns>True if it succeeds, false if it fails.</returns>
         extern "C" XI_EXPORT bool run(const char* context)
         {
-            gApp = Application::get();
-            if (!gApp)
+            toolsApp = Application::get();
+            if (!toolsApp)
                 return false;
 
-            gUi = gApp->userInterface();
-            if (!gUi)
+            toolsUI = toolsApp->userInterface();
+            if (!toolsUI)
                 return false;
 
 			Application::log("ToolsBar::initialize");
 
-            if (!gApp->initialize())
+            if (!toolsApp->initialize())
                 return false;
 
             return true;
@@ -54,11 +54,11 @@ namespace implicatex {
         /// <returns>True if it succeeds, false if it fails.</returns>
         extern "C" XI_EXPORT bool stop(const char* context)
         {
-            if (gUi)
+            if (toolsUI)
             {
-                gApp->terminate();
+                toolsApp->terminate();
 
-                gUi = nullptr;
+                toolsUI = nullptr;
             }
 
             return true;

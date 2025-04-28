@@ -1,9 +1,10 @@
 #include "pch.h"  
 #include "resource.h"  
+#include "ResourceHelper.h"
 #include "ToolsBar.h"
 #include "ToolsApp.h"  
 #include "ImplicateXFusionToolsAddIn.h"
-#include "ResourceHelper.h"
+#include "SketchTextPanel.h"
 
 using namespace adsk::core;
 using namespace adsk::fusion;
@@ -11,9 +12,10 @@ using namespace adsk::cam;
 
 namespace implicatex {
 	namespace fusion {
-		std::unique_ptr<ToolsBar> ToolsApp::sToolsBar = nullptr;
+		std::unique_ptr<ToolsBar> ToolsApp::toolsBar = nullptr;
+		std::unique_ptr<SketchTextPanel> ToolsApp::sketchTextPanel = nullptr;
 
-		std::map<UserLanguages, std::string> ToolsApp::sLocaleIdMap;
+		std::map<UserLanguages, std::string> ToolsApp::localeIdMap;
 
 		/// <summary>
 		/// <para>The ToolsApp::initialize() function initializes the Implicate-X tools application</para>
@@ -21,7 +23,6 @@ namespace implicatex {
 		/// <para>while handling any exceptions that may occur during the process.</para>
 		/// </summary>
 		/// <returns>True if it succeeds, false if it fails.</returns>
-		/// 
 		bool ToolsApp::initialize() {
 			if (!userInterface())
 				return false;
@@ -35,9 +36,9 @@ namespace implicatex {
 				textCommandPalette->isVisible(true);
 			}
 
-			gLocaleId = getFusion360LocaleId();
+			toolsLocaleId = getFusion360LocaleId();
 
-			Application::log(gLocaleId);
+			Application::log(toolsLocaleId);
 			Application::log(LoadStringFromResource(IDS_MSG_APP_INITIALIZED));
 
 			if (!createBar()) {
@@ -52,7 +53,6 @@ namespace implicatex {
 		/// <para>The ToolsApp::terminate() function is responsible for removing the application panel</para>
 		/// <para>and logging a termination message when the application is closed.</para>
 		/// </summary>
-		/// 
 		void ToolsApp::terminate() {
 			removeBar();
 			Application::log(LoadStringFromResource(IDS_MSG_APP_TERMINATED));
@@ -62,21 +62,20 @@ namespace implicatex {
 		/// <para>The ToolsApp::createBar() function is responsible for initializing and displaying a panel</para>
 		/// <para>for sketch text definitions, ensuring that any existing panel is removed before creating a new one.</para>
 		/// </summary>
-		///
 		bool ToolsApp::createBar() {
-			if (sToolsBar) {
+			if (toolsBar) {
 				removeBar();
 			}
 
-			if (!sToolsBar) {
-				sToolsBar = std::make_unique<ToolsBar>();
+			if (!toolsBar) {
+				toolsBar = std::make_unique<ToolsBar>();
 			}
 
-			if (!sToolsBar) {
+			if (!toolsBar) {
 				return false;
 			}
 
-			if (!sToolsBar->initialize()) {
+			if (!toolsBar->initialize()) {
 				removeBar();
 				return false;
 			}
@@ -89,12 +88,40 @@ namespace implicatex {
 		/// <para> to a panel associated with sketch text definitions,</para>
 		/// <para>ensuring that any commands related to the panel are also removed.</para>
 		/// </summary>
-		/// 
 		void ToolsApp::removeBar() {
-			if (sToolsBar) {
-				sToolsBar->terminate();
-				sToolsBar.reset();
-				sToolsBar = nullptr;
+			if (toolsBar) {
+				toolsBar->terminate();
+				toolsBar.reset();
+				toolsBar = nullptr;
+			}
+		}
+
+		bool ToolsApp::createSketchTextPanel() {
+			if (sketchTextPanel) {
+				removeSketchTextPanel();
+			}
+
+			if (!sketchTextPanel) {
+				sketchTextPanel = std::make_unique<SketchTextPanel>();
+			}
+
+			if (!sketchTextPanel) {
+				return false;
+			}
+
+			if (!sketchTextPanel->initialize()) {
+				removeSketchTextPanel();
+				return false;
+			}
+
+			return true;
+		}
+
+		void ToolsApp::removeSketchTextPanel() {
+			if (sketchTextPanel) {
+				sketchTextPanel->terminate();
+				sketchTextPanel.reset();
+				sketchTextPanel = nullptr;
 			}
 		}
 
@@ -104,24 +131,23 @@ namespace implicatex {
 		/// </summary>
 		///
 		/// <returns>The fusion 360 locale identifier.</returns>
-		/// 
 		std::string ToolsApp::getFusion360LocaleId() {
-			sLocaleIdMap = {};
-			sLocaleIdMap.insert({ UserLanguages::ChinesePRCLanguage,			 "zh-CN" });
-			sLocaleIdMap.insert({ UserLanguages::ChineseTaiwanLanguage,		 "zh-TW" });
-			sLocaleIdMap.insert({ UserLanguages::CzechLanguage,				 "cs-CZ" });
-			sLocaleIdMap.insert({ UserLanguages::EnglishLanguage,			 "en-US" });
-			sLocaleIdMap.insert({ UserLanguages::FrenchLanguage,				 "fr-FR" });
-			sLocaleIdMap.insert({ UserLanguages::GermanLanguage,				 "de-DE" });
-			sLocaleIdMap.insert({ UserLanguages::HungarianLanguage,			 "hu-HU" });
-			sLocaleIdMap.insert({ UserLanguages::ItalianLanguage,			 "it-IT" });
-			sLocaleIdMap.insert({ UserLanguages::JapaneseLanguage,			 "ja-JP" });
-			sLocaleIdMap.insert({ UserLanguages::KoreanLanguage,				 "ko-KR" });
-			sLocaleIdMap.insert({ UserLanguages::PolishLanguage,				 "pl-PL" });
-			sLocaleIdMap.insert({ UserLanguages::PortugueseBrazilianLanguage, "pt-BR" });
-			sLocaleIdMap.insert({ UserLanguages::RussianLanguage,			 "ru-RU" });
-			sLocaleIdMap.insert({ UserLanguages::SpanishLanguage,			 "es-ES" });
-			sLocaleIdMap.insert({ UserLanguages::TurkishLanguage,			 "tr-TR" });
+			localeIdMap = {};
+			localeIdMap.insert({ UserLanguages::ChinesePRCLanguage,			 "zh-CN" });
+			localeIdMap.insert({ UserLanguages::ChineseTaiwanLanguage,		 "zh-TW" });
+			localeIdMap.insert({ UserLanguages::CzechLanguage,				 "cs-CZ" });
+			localeIdMap.insert({ UserLanguages::EnglishLanguage,			 "en-US" });
+			localeIdMap.insert({ UserLanguages::FrenchLanguage,				 "fr-FR" });
+			localeIdMap.insert({ UserLanguages::GermanLanguage,				 "de-DE" });
+			localeIdMap.insert({ UserLanguages::HungarianLanguage,			 "hu-HU" });
+			localeIdMap.insert({ UserLanguages::ItalianLanguage,			 "it-IT" });
+			localeIdMap.insert({ UserLanguages::JapaneseLanguage,			 "ja-JP" });
+			localeIdMap.insert({ UserLanguages::KoreanLanguage,				 "ko-KR" });
+			localeIdMap.insert({ UserLanguages::PolishLanguage,				 "pl-PL" });
+			localeIdMap.insert({ UserLanguages::PortugueseBrazilianLanguage, "pt-BR" });
+			localeIdMap.insert({ UserLanguages::RussianLanguage,			 "ru-RU" });
+			localeIdMap.insert({ UserLanguages::SpanishLanguage,			 "es-ES" });
+			localeIdMap.insert({ UserLanguages::TurkishLanguage,			 "tr-TR" });
 
 			std::string localeId = "en-US"; // Default to English
 
@@ -130,8 +156,8 @@ namespace implicatex {
 				Ptr<GeneralPreferences> generalPreferences = preferences->generalPreferences();
 				if (generalPreferences) {
 					UserLanguages userLanguage = generalPreferences->userLanguage();
-					if (sLocaleIdMap.find(userLanguage) != sLocaleIdMap.end()) {
-						localeId = sLocaleIdMap.at(userLanguage);// .substr(0, 2);
+					if (localeIdMap.find(userLanguage) != localeIdMap.end()) {
+						localeId = localeIdMap.at(userLanguage);// .substr(0, 2);
 					}
 				}
 			}
@@ -146,7 +172,6 @@ namespace implicatex {
 		///
 		/// <param name="selectedLocale">		   The selected locale.</param>
 		/// <param name="localeLanguageRegionMap">[in,out] The locale language region map.</param>
-		/// 
 		void ToolsApp::getLanguageRegionNames(std::string selectedLocale, std::map<std::string,std::string>& localeLanguageRegionMap) {
 			UErrorCode status = U_ZERO_ERROR;
 			UnicodeString result;
@@ -158,7 +183,7 @@ namespace implicatex {
 			
 			localeLanguageRegionMap.clear();
 
-			for (const auto& [index, locale] : ToolsApp::sLocaleIdMap) {
+			for (const auto& [index, locale] : ToolsApp::localeIdMap) {
 				languageCode = locale.substr(0, 2);
 				regionCode = locale.substr(3, 2);
 				localeBuilder =
@@ -184,9 +209,8 @@ namespace implicatex {
 		/// <para>based on the specified locale, populating the provided vector with the sorted results.</para>
 		/// </summary>
 		///
-		/// <param name="selectedLocale">		   The selected locale.</param>
+		/// <param name="selectedLocale">		    The selected locale.</param>
 		/// <param name="localeLanguageRegionMap">[in,out] The locale language region map.</param>
-		/// 
 		void ToolsApp::getLanguageRegionNamesSorted(std::string selectedLocale, std::vector<std::pair<std::string, std::string>>& sortedLocaleLanguageRegionList) {
 			std::map<std::string, std::string> localeLanguageRegionMap;
 

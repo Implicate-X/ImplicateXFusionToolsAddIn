@@ -13,7 +13,7 @@ namespace implicatex {
 	namespace fusion {
 		bool ToolsBar::initialize() {
 			Application::log("ToolsBar::initialize");
-			Ptr<Workspace> workspace = gUi->workspaces()->itemById(IDS_ID_SOLID_ENV);
+			Ptr<Workspace> workspace = toolsUI->workspaces()->itemById(IDS_ID_SOLID_ENV);
 			if (!workspace) {
 				Application::log("Workspace 'FusionSolidEnvironment' not found.");
 				return false;
@@ -46,7 +46,7 @@ namespace implicatex {
 		}
 
 		void ToolsBar::terminate() {
-			Ptr<Workspace> workspace = gUi->workspaces()->itemById(IDS_ID_SOLID_ENV);
+			Ptr<Workspace> workspace = toolsUI->workspaces()->itemById(IDS_ID_SOLID_ENV);
 			if (workspace) {
 				Application::log("ToolsBar::terminate");
 				Ptr<ToolbarPanels> panels = workspace->toolbarPanels();

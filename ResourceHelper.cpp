@@ -3,6 +3,8 @@
 #include "ImplicateXFusionToolsAddIn.h"
 #include "ResourceHelper.h"
 
+#define ICU77
+
 namespace implicatex {
     namespace fusion {
         /// <summary>
@@ -12,7 +14,7 @@ namespace implicatex {
         /// </summary>
         ///
         /// <param name="resourceId">
-        /// <para>resourceId is an unsigned integer that typically represents a unique identifier for a resource, </para>
+        /// <para>is an unsigned integer that typically represents a unique identifier for a resource, </para>
         /// <para>such as a graphical element or a string, used in applications or libraries.</para>
         /// </param>
         ///
@@ -21,7 +23,7 @@ namespace implicatex {
             HMODULE hModule = GetModuleHandle(MODULE_NAME);
             wchar_t localeName[LOCALE_NAME_MAX_LENGTH];
             size_t convertedChars = 0;
-            mbstowcs_s(&convertedChars, localeName, gLocaleId.c_str(), gLocaleId.size() + 1);
+            mbstowcs_s(&convertedChars, localeName, toolsLocaleId.c_str(), toolsLocaleId.size() + 1);
 
             LANGID langId;
             wchar_t langIdStr[LOCALE_NAME_MAX_LENGTH];
@@ -41,10 +43,19 @@ namespace implicatex {
                         for (unsigned int i = 0; i < (resourceId & 15); ++i) {
                             pRes += *pRes + 1;
                         }
+
+                        #ifndef ICU77
+                        std::wstring wstr(pRes + 1, *pRes);
+                        int size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.size(), NULL, 0, NULL, NULL);
+                        std::string str(size_needed, 0);
+                        WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.size(), &str[0], size_needed, NULL, NULL);
+                        return str;
+                        #else
                         icu::UnicodeString unicodeStr(pRes + 1, *pRes);
                         std::string utf8String;
                         unicodeStr.toUTF8String(utf8String);
                         return utf8String;
+                        #endif
                     }
                 }
             }
@@ -83,9 +94,9 @@ namespace implicatex {
                 return "";
             }
 	        icu::UnicodeString unicodeStr(wideString);
-           std::string utf8String;
-           unicodeStr.toUTF8String(utf8String);
-           return utf8String;
+            std::string utf8String;
+            unicodeStr.toUTF8String(utf8String);
+            return utf8String;
         }
 
         /// <summary>
@@ -100,7 +111,6 @@ namespace implicatex {
         std::string GetLocalizedLanguageName(const wchar_t* sourceLocale, const wchar_t* targetLocale) {
             wchar_t buffer[256];
             if (GetLocaleInfoEx(sourceLocale, LOCALE_SLOCALIZEDLANGUAGENAME, buffer, 256)) {
-                // Konvertiere den Namen in die Ziel-Locale
                 wchar_t translatedBuffer[256];
                 if (GetLocaleInfoEx(targetLocale, LOCALE_SLOCALIZEDLANGUAGENAME, translatedBuffer, 256)) {
                     return WideCharToUtf8(translatedBuffer);

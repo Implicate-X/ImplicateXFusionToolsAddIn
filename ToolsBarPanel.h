@@ -59,21 +59,24 @@ namespace implicatex {
 			bool addToolsCommandControl();
 
 			/// <summary>
-			/// <para></para>
+			/// <para>addSketchTextCommandControl adds a command control for sketch text functionality to the toolbar, </para>
+			/// <para>ensuring proper initialization and logging any failures encountered during the process.</para>
 			/// </summary>
 			///
 			/// <returns>True if it succeeds, false if it fails.</returns>
 			bool addSketchTextCommandControl();
 
 			/// <summary>
-			/// <para></para>
+			/// <para>removeSketchTextCommandControl is for deleting the sketch text command from the user interface </para>
+			/// <para>if it exists, returning true upon successful execution.</para>
 			/// </summary>
 			///
 			/// <returns>True if it succeeds, false if it fails.</returns>
 			bool removeSketchTextCommandControl();
 
 			/// <summary>
-			/// <para></para>
+			/// <para>updateSketchTextCommandControlLabel updates the control label of the sketch text command, </para>
+			/// <para>using a string loaded from resources, and returns a boolean indicating success.</para>
 			/// </summary>
 			///
 			/// <returns>True if it succeeds, false if it fails.</returns>

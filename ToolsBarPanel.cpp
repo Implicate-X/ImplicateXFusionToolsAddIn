@@ -43,11 +43,11 @@ namespace implicatex {
 		/// <para>related to region selections and the Tools command from the user interface.</para>
 		/// </summary>
 		void ToolsBarPanel::terminate() {
-			if (gUi) {
+			if (toolsUI) {
 				removeLanguageSelector();
 				removeSketchTextCommandControl();
 
-				Ptr<CommandDefinition> implicateXCommandDef = gUi->commandDefinitions()->itemById(IDS_CMD_IMPLICATEX_TOOLS);
+				Ptr<CommandDefinition> implicateXCommandDef = toolsUI->commandDefinitions()->itemById(IDS_CMD_IMPLICATEX_TOOLS);
 				if (implicateXCommandDef) {
 					implicateXCommandDef->deleteMe();
 				}
@@ -71,7 +71,7 @@ namespace implicatex {
 			std::string buttonName = LoadStringFromResource(IDS_CMD_NAME_IMPLICATEX);
 
             Ptr<CommandDefinition> implicateXCommandDef = 
-            gUi->commandDefinitions()->addButtonDefinition(IDS_CMD_IMPLICATEX_TOOLS, buttonName, buttonName, IDS_SUBDIR_LOGO);
+            toolsUI->commandDefinitions()->addButtonDefinition(IDS_CMD_IMPLICATEX_TOOLS, buttonName, buttonName, IDS_SUBDIR_LOGO);
 
             if (!implicateXCommandDef) {
                 Application::log("Failed to add CommandDefinition for Tools.");
@@ -97,7 +97,8 @@ namespace implicatex {
 		}
 
 		/// <summary>
-		/// <para></para>
+		/// <para>addSketchTextCommandControl adds a command control for sketch text functionality to the toolbar, </para>
+		/// <para>ensuring proper initialization and logging any failures encountered during the process.</para>
 		/// </summary>
 		///
 		/// <returns>True if it succeeds, false if it fails.</returns>
@@ -111,7 +112,7 @@ namespace implicatex {
 			std::string buttonLabel = LoadStringFromResource(IDS_LABEL_SKETCHTEXT);
 
             Ptr<CommandDefinition> sketchTextCommandDef = 
-            gUi->commandDefinitions()->addButtonDefinition(IDS_CMD_SKETCHTEXT, buttonLabel, buttonLabel, IDS_SUBDIR_SKETCHTEXT);
+            toolsUI->commandDefinitions()->addButtonDefinition(IDS_CMD_SKETCHTEXT, buttonLabel, buttonLabel, IDS_SUBDIR_SKETCHTEXT);
 
             if (!sketchTextCommandDef) {
                 Application::log("Failed to add CommandDefinition for Sketch text definitions.");
@@ -137,14 +138,15 @@ namespace implicatex {
 		}
 
 		/// <summary>
-		/// <para></para>
+		/// <para>removeSketchTextCommandControl is for deleting the sketch text command from the user interface </para>
+		/// <para>if it exists, returning true upon successful execution.</para>
 		/// </summary>
 		///
 		/// <returns>True if it succeeds, false if it fails.</returns>
 		bool ToolsBarPanel::removeSketchTextCommandControl() {
-			if (gUi)
+			if (toolsUI)
 			{
-				Ptr<CommandDefinition> sketchTextCommandDef = gUi->commandDefinitions()->itemById(IDS_CMD_SKETCHTEXT);
+				Ptr<CommandDefinition> sketchTextCommandDef = toolsUI->commandDefinitions()->itemById(IDS_CMD_SKETCHTEXT);
 				if (sketchTextCommandDef) {
 					sketchTextCommandDef->deleteMe();
 				}
@@ -153,16 +155,17 @@ namespace implicatex {
 		}
 
 		/// <summary>
-		/// <para></para>
+		/// <para>updateSketchTextCommandControlLabel updates the control label of the sketch text command, </para>
+		/// <para>using a string loaded from resources, and returns a boolean indicating success.</para>
 		/// </summary>
 		///
 		/// <returns>True if it succeeds, false if it fails.</returns>
 		bool ToolsBarPanel::updateSketchTextCommandControlLabel() {
-			if (gUi)
+			if (toolsUI)
 			{
 				std::string controlLabel = LoadStringFromResource(IDS_LABEL_SKETCHTEXT);
 
-				Ptr<CommandDefinition> sketchTextCommandDef = gUi->commandDefinitions()->itemById(IDS_CMD_SKETCHTEXT);
+				Ptr<CommandDefinition> sketchTextCommandDef = toolsUI->commandDefinitions()->itemById(IDS_CMD_SKETCHTEXT);
 				if (sketchTextCommandDef) {
 					sketchTextCommandDef->controlDefinition()->name(controlLabel);
 				}
@@ -186,7 +189,7 @@ namespace implicatex {
 			std::string itemText = "   " + LoadStringFromResource(IDS_LABEL_SELECT_LANGUAGE);
 
 			Ptr<LanguageDropDownControl> languageDropDown = 
-				controls->addDropDown(itemText, IDS_SUBDIR_FLAGS + gLocaleId, IDS_ID_LANG_SELECTOR);
+				controls->addDropDown(itemText, IDS_SUBDIR_FLAGS + toolsLocaleId, IDS_ID_LANG_SELECTOR);
 
 			if (!languageDropDown) {
 				Application::log("Failed to create DropDownControl.");
@@ -208,7 +211,7 @@ namespace implicatex {
 		///
 		/// <returns>True if it succeeds, false if it fails.</returns>
 		bool ToolsBarPanel::removeLanguageSelector() {
-			Ptr<CommandDefinition> commandDef = gUi->commandDefinitions()->itemById(IDS_CMD_LANG_SELECTOR);
+			Ptr<CommandDefinition> commandDef = toolsUI->commandDefinitions()->itemById(IDS_CMD_LANG_SELECTOR);
 			if (commandDef) {
 				if (!commandDef->deleteMe()) {
 					Application::log("Failed to delete CommandDefinition for Language Selector.");
@@ -241,7 +244,7 @@ namespace implicatex {
 			std::string message = "Selected language: " + localeId_;
 			Application::log(message);
 
-			Ptr<Workspace> workspace = gUi->workspaces()->itemById(IDS_ID_SOLID_ENV);
+			Ptr<Workspace> workspace = toolsUI->workspaces()->itemById(IDS_ID_SOLID_ENV);
 			if (!workspace) {
 				Application::log("Workspace 'FusionSolidEnvironment' not found.");
 				return;
@@ -262,7 +265,7 @@ namespace implicatex {
 					Application::log("Failed to terminate LanguageDropDownControl.");
 					return;
 				}
-				gLocaleId = tempLocaleId.c_str();
+				toolsLocaleId = tempLocaleId.c_str();
 				if (!toolsBarPanel->addLanguageSelector()) {
 					Application::log("Failed to add LanguageDropDownControl.");
 					return;

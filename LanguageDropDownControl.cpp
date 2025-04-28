@@ -34,16 +34,19 @@ namespace implicatex {
 		/// <para>for selecting countries, populating it with command buttons for each region,</para>
 		/// <para>and logging any failures encountered during the process.</para></summary>
 		///
+        /// <param name="doTerminate">
+        /// <para>is a boolean value that likely indicates whether a termination condition has been met.</para>
+        /// </param>
+        /// 
 		/// <returns>True if it succeeds, false if it fails.</returns>
-		/// 
 		bool LanguageDropDownControl::initialize(bool doTerminate) {
 			initializeCommandDefCounters();
 			if (doTerminate) {
 				terminate();
 			}
-			if (gUi) {
+			if (toolsUI) {
 				std::vector<std::pair<std::string, std::string>> sortedLocaleLanguageRegionList;
-				gApp->getLanguageRegionNamesSorted(gLocaleId, sortedLocaleLanguageRegionList);
+				toolsApp->getLanguageRegionNamesSorted(toolsLocaleId, sortedLocaleLanguageRegionList);
 				for (const auto& entry : sortedLocaleLanguageRegionList) {
 					std::string locale = entry.first;
                     std::string locale_ = locale;
@@ -52,7 +55,7 @@ namespace implicatex {
 					std::string commandId = generateUniqueCommandId(locale_);
 					std::string commandName = "   " + language;
 					std::string commandDescription = language;
-					auto commandDef = gUi->commandDefinitions()->itemById(commandId);
+					auto commandDef = toolsUI->commandDefinitions()->itemById(commandId);
 					if (commandDef) {
 						Application::log("Terminate: CommandDefinition already exists for " + commandId);
 						if (!commandDef->deleteMe()) {
@@ -60,7 +63,7 @@ namespace implicatex {
 							continue;
 						}
 					}
-					commandDef = gUi->commandDefinitions()->addButtonDefinition(commandId.c_str(), commandName.c_str(), commandDescription.c_str(), IDS_SUBDIR_FLAGS + locale);
+					commandDef = toolsUI->commandDefinitions()->addButtonDefinition(commandId.c_str(), commandName.c_str(), commandDescription.c_str(), IDS_SUBDIR_FLAGS + locale);
 					if (!commandDef) {
 						Application::log("Failed to add CommandDefinition for " + commandId);
 						continue;
@@ -87,16 +90,16 @@ namespace implicatex {
 		/// </summary>
 		/// 
 		void LanguageDropDownControl::terminate() {
-			if (gUi) {
+			if (toolsUI) {
 				std::vector<std::pair<std::string, std::string>> sortedLocaleLanguageRegionList;
-				gApp->getLanguageRegionNamesSorted(gLocaleId, sortedLocaleLanguageRegionList);
+				toolsApp->getLanguageRegionNamesSorted(toolsLocaleId, sortedLocaleLanguageRegionList);
 				for (const auto& entry : sortedLocaleLanguageRegionList) {
 					std::string locale = entry.first;
                     std::string locale_ = locale;
 					std::string language = entry.second;
                     std::replace(locale_.begin(), locale_.end(), '-', '_');
 					std::string commandId = getCurrentCommandId(locale_);
-					auto commandDef = gUi->commandDefinitions()->itemById(commandId);
+					auto commandDef = toolsUI->commandDefinitions()->itemById(commandId);
 					if (commandDef) {
 						auto event = commandDef->commandCreated();
 						if (event) {

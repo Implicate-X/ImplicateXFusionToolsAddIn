@@ -2,12 +2,12 @@
 using namespace adsk::core;
 using namespace adsk::fusion;
 using namespace adsk::cam;
-using namespace icu;
 
 #include "ToolsBar.h"
 
 namespace implicatex {
 	namespace fusion {
+		class SketchTextPanel;
 		/// <summary>
 		/// <para>The ToolsApp class in the implicatex::fusion namespace is designed to manage the initialization,</para>
 		/// <para>termination, and user interface components of the Implicate-X tools application, </para>
@@ -21,10 +21,12 @@ namespace implicatex {
 			/// <para>sToolsBar is a static member of the ToolsApp class, which holds a unique pointer to a ToolsBar object,</para>
 			/// <para> ensuring exclusive ownership and automatic memory management.</para>
 			/// </summary>
-			static std::unique_ptr<ToolsBar> sToolsBar;
+			static std::unique_ptr<ToolsBar> toolsBar;
+
+			static std::unique_ptr<SketchTextPanel> sketchTextPanel;
 
 			/// <summary>The locale identifier map.</summary>
-			static std::map<UserLanguages, std::string> sLocaleIdMap;
+			static std::map<UserLanguages, std::string> localeIdMap;
 
 			/// <summary>
 			/// <para>The ToolsApp::initialize() function initializes the Implicate-X tools application</para>
@@ -52,6 +54,10 @@ namespace implicatex {
 			/// <para>ensuring that any commands related to the panel are also removed.</para>
 			/// </summary>
 			void removeBar();
+
+			bool createSketchTextPanel();
+
+			void removeSketchTextPanel();
 
 			/// <summary>
 			/// <para>The getFusion360Language() function retrieves the user's preferred locale id for Fusion 360,</para>

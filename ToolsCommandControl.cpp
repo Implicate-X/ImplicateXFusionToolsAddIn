@@ -8,27 +8,14 @@
 namespace implicatex {
     namespace fusion {
         /// <summary>
-        /// <para>ToolsCommandCreatedEventHandler is a event handler that inherits from CommandCreatedEventHandler</para>
-		/// <para> and overrides the notify method to display a message box when a tools command is created.</para>
-        /// </summary>
-        class ToolsCommandCreatedEventHandler : public CommandCreatedEventHandler {
-        public:
-            explicit ToolsCommandCreatedEventHandler() {}
-
-            void notify(const Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) override {
-                Application::log(IDS_CMD_IMPLICATEX_TOOLS);
-            }
-        };
-
-        /// <summary>
         /// <para>The initialize function of the ToolsCommandControl class sets up a command </para>
         /// <para>by adding an event handler for the command creation event, returning true if successful.</para>
         /// </summary>
         ///
         /// <returns>True if it succeeds, false if it fails.</returns>
         bool ToolsCommandControl::initialize() {
-			if (gUi) {
-				Ptr<CommandDefinition> implicateXCommandDef = gUi->commandDefinitions()->itemById(IDS_CMD_IMPLICATEX_TOOLS);
+			if (toolsUI) {
+				Ptr<CommandDefinition> implicateXCommandDef = toolsUI->commandDefinitions()->itemById(IDS_CMD_IMPLICATEX_TOOLS);
                 if (implicateXCommandDef) {
                     auto handler = new ToolsCommandCreatedEventHandler();
 
@@ -40,6 +27,15 @@ namespace implicatex {
 			}
 
             return true;
+        }
+
+        /// <summary>The notify method is an overridden virtual function that handles the event when a command is created.</summary>
+        ///
+        /// <param name="eventArgs">
+		/// <para>- The event arguments that contain information about the command creation event.</para>
+        /// </param>
+        void ToolsCommandCreatedEventHandler::notify(const Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) {
+            Application::log(IDS_CMD_IMPLICATEX_TOOLS);
         }
     }
 }
