@@ -72,6 +72,8 @@
     <ClInclude Include="ToolsApp.h">
       <Filter>App</Filter>
     </ClInclude>
+    <ClInclude Include="SketchTexts.h" />
+    <ClInclude Include="Component.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resources">

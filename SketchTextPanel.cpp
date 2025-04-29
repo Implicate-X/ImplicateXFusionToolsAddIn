@@ -9,6 +9,12 @@
 
 namespace implicatex {
 	namespace fusion {
+		/// <summary>
+		/// <para>The createCommand function in the SketchTextPanel class is responsible</para>
+		/// <para>for creating and executing a new command definition for sketch text definitions.</para>
+		/// </summary>
+		///
+		/// <returns>True if it succeeds, false if it fails.</returns>
 		bool SketchTextPanel::createCommand() {
 			if (!removeCommand()) {
 				return false;
@@ -37,6 +43,12 @@ namespace implicatex {
 			return true;
 		}
 
+		/// <summary>
+		/// <para>The removeCommand function in the SketchTextPanel class is for deleting </para>
+		/// <para>a specific command definition associated with the sketch text panel.</para>
+		/// </summary>
+		///
+		/// <returns>True if it succeeds, false if it fails.</returns>
 		bool SketchTextPanel::removeCommand() {
 			if (toolsUI) {
 				Ptr<CommandDefinition> sketchTextPanelCommandDef = 
@@ -54,24 +66,33 @@ namespace implicatex {
 		}
 
 		/// <summary>
-		/// <para>The initialize function in the SketchTextDefinitionsPanel class is responsible</para>
+		/// <para>The initialize function in the SketchTextPanel class is responsible</para>
 		/// <para>for setting up the palette by invoking the createCommand method.</para>
 		/// </summary>
+		///
+		/// <returns>True if it succeeds, false if it fails.</returns>
 		bool SketchTextPanel::initialize() {
 			return createCommand();
 		}
 
+		/// <summary>
+		/// <para>The terminate function in the SketchTextPanel class is a boolean method </para>
+		/// <para>that calls and returns the result of the removeCommand function.</para>
+		/// </summary>
+		///
+		/// <returns>True if it succeeds, false if it fails.</returns>
 		bool SketchTextPanel::terminate() {
 			return removeCommand();
 		}
 
 		/// <summary>
-		/// <para>The notify method is an overridden virtual function that handles the creation of a command by setting up</para>
-		/// <para>its user interface elements,including tabs, dropdowns, and input fields for user interaction.</para>
+		/// <para>The notify method is an overridden virtual function that handles the creation </para>
+		/// <para>of a command by setting up its user interface elements,including tabs, dropdowns, </para>
+		/// <para>and input fields for user interaction.</para>
 		/// </summary>
 		/// <param name="eventArgs">
-		/// <para>The symbol eventArgs is a constant reference to a pointer of type CommandCreatedEventArgs,</para>
-		/// <para>which likely contains information related to the creation of a command event in the Autodesk API.</para>
+		/// <para>is a constant reference to a pointer of type CommandCreatedEventArgs,</para>
+		/// <para>which likely contains information related to the creation of a command event.</para>
 		/// </param>
 		void SketchTextPanelCommandCreatedEventHandler::notify(const Ptr<CommandCreatedEventArgs>& eventArgs) {
 			Ptr<Command> command = eventArgs->command();
@@ -131,12 +152,11 @@ namespace implicatex {
 		}
 
 		/// <summary>
-		/// <para>The notify method is an overridden virtual function that handles input change events by updating</para>
-		/// <para>a read-only text fieldwith the count of sketch texts based on the selected item from a dropdown menu.</para>
+		/// <para>The notify method is an overridden virtual function that handles input change events.</para>
 		/// </summary>
 		/// <param name="eventArgs">
-		/// <para>The symbol eventArgs is a constant reference to a pointer of type InputChangedEventArgs,</para>
-		/// <para>which is typically used to handle input change events in Autodesk's API.</para>
+		/// <para>is a constant reference to a pointer of type InputChangedEventArgs, </para>
+		/// <para>which is typically used to handle input change events.</para>
 		/// </param>
 		void SketchTextPanelInputChangedEventHandler::notify(const Ptr<InputChangedEventArgs>& eventArgs) {
 			Ptr<CommandInputs> inputs = eventArgs->inputs();
@@ -152,20 +172,162 @@ namespace implicatex {
 				double minHeightValue = minTextHeight->value();
 				double maxHeightValue = maxTextHeight->value();
 
-				// Berechnen der Anzahl der gefundenen Sketchtexte
-				int textHeightMatchCount = 89;
-				// Placeholder for actual implementation to count the found texts
-				// foundTextsCount = ...
+				Ptr<Design> design = toolsApp->activeProduct();
+				Ptr<Sketch> sketch = design->rootComponent()->sketches()->itemByName(selectedSketchName);
+				if (!sketch) {
+					Application::log("InputChanged: Sketch not found");
+					return;
+				}
 
-				// Aktualisieren des Nur-Lesen-Felds mit der Anzahl der gefundenen Sketchtexte
+				toolsApp->sketchTextPanel->alignModelToSketchXYPlane(sketch);
+
+				auto filteredTexts = 
+					toolsApp->sketchTextPanel->filterTextDefinitionsByHeight(sketch, minHeightValue, maxHeightValue);
+
+				int textHeightMatchCount = filteredTexts.size();
+
 				matchesTextHeightInput->text(std::to_string(textHeightMatchCount));
 
-				// Handle the selected sketch
-				// Placeholder for actual implementation
+				//for (const auto& text : filteredTexts) {
+				//	Application::log("Filtered Text: " + text->text());
+				//}
+
 			}
 			else {
 				Application::get()->log("InputChanged: No sketch selected");
 			}
+		}
+
+
+		/// <summary>Filter text definitions by height.</summary>
+		///
+		/// <param name="sketch">		 The sketch.</param>
+		/// <param name="minHeightValue">The minimum height value.</param>
+		/// <param name="maxHeightValue">The maximum height value.</param>
+		///
+		/// <returns>A std::vector&lt;Ptr&lt;SketchText&gt;&gt;</returns>
+		std::vector<Ptr<SketchText>> SketchTextPanel::filterTextDefinitionsByHeight(
+			const Ptr<Sketch>& sketch,
+			double minHeightValue,
+			double maxHeightValue)
+		{
+			std::vector<Ptr<SketchText>> filteredTexts;
+
+			if (!sketch) {
+				Application::log("Invalid sketch provided.");
+				return filteredTexts;
+			}
+
+			Ptr<SketchTexts> sketchTexts = sketch->sketchTexts();
+			if (!sketchTexts) {
+				Application::log("No SketchTexts found in the sketch.");
+				return filteredTexts;
+			}
+
+			//std::for_each(sketchTexts->begin(), sketchTexts->end(), [&](const Ptr<SketchText>& text) {
+			//	if (text) {
+			//		double textHeight = text->height();
+			//		if (textHeight >= minHeightValue && textHeight <= maxHeightValue) {
+			//			filteredTexts.push_back(text);
+			//		}
+			//	}
+			//});
+			for (size_t i = 0; i < sketchTexts->count(); ++i) {
+				Ptr<SketchText> text = sketchTexts->item(i);
+				if (text) {
+					double textHeight = text->height();
+					if (textHeight >= minHeightValue && textHeight <= maxHeightValue) {
+						filteredTexts.push_back(text);
+					}
+				}
+			}
+
+			return filteredTexts;
+		}
+
+		/// <summary>Align model to sketch xy plane.</summary>
+		///
+		/// <param name="sketch">The sketch.</param>
+		///
+		/// <returns>True if it succeeds, false if it fails.</returns>
+		bool SketchTextPanel::alignModelToSketchXYPlane(const Ptr<Sketch>& sketch) {
+			if (!sketch) {
+				Application::log("Invalid sketch provided.");
+				return false;
+			}
+
+			Ptr<Vector3D> sketchXDirection = sketch->xDirection();
+			Ptr<Vector3D> sketchYDirection = sketch->yDirection();
+			if (!sketchXDirection || !sketchYDirection) {
+				Application::log("Failed to retrieve sketch directions.");
+				return false;
+			}
+
+			Ptr<Vector3D> sketchZDirection = sketchXDirection->crossProduct(sketchYDirection);
+			if (!sketchZDirection) {
+				Application::log("Failed to calculate sketch Z direction.");
+				return false;
+			}
+
+			Ptr<Point3D> sketchOrigin = sketch->origin();
+			if (!sketchOrigin) {
+				Application::log("Failed to retrieve sketch origin.");
+				return false;
+			}
+
+			Ptr<BoundingBox3D> boundingBox = sketch->boundingBox();
+			if (!boundingBox) {
+				Application::log("Failed to retrieve bounding box of the sketch.");
+				return false;
+			}
+
+			Ptr<Point3D> minPoint = boundingBox->minPoint();
+			Ptr<Point3D> maxPoint = boundingBox->maxPoint();
+			if (!minPoint || !maxPoint) {
+				Application::log("Failed to retrieve bounding box points.");
+				return false;
+			}
+
+			Ptr<Point3D> center = Point3D::create(
+				(minPoint->x() + maxPoint->x()) / 2.0,
+				(minPoint->y() + maxPoint->y()) / 2.0,
+				(minPoint->z() + maxPoint->z()) / 2.0
+			);
+
+			double diagonal = sqrt(
+				pow(maxPoint->x() - minPoint->x(), 2) +
+				pow(maxPoint->y() - minPoint->y(), 2) +
+				pow(maxPoint->z() - minPoint->z(), 2)
+			);
+
+			ViewOrientations orientation;
+			if (sketchZDirection->z() > 0) {
+				orientation = ViewOrientations::TopViewOrientation;
+			} else {
+				orientation = ViewOrientations::BottomViewOrientation;
+			}
+			Application::log("Orientation: " + std::to_string(static_cast<int>(orientation)));
+
+			Ptr<Camera> camera = Camera::create();
+			if (!camera) {
+				Application::log("Failed to create camera.");
+				return false;
+			}
+			
+			camera->eye(Point3D::create(center->x(), center->y(), center->z() + diagonal * 1.5));
+			camera->target(center);
+			camera->upVector(Vector3D::create(0.0, 1.0, 0.0));
+			camera->isSmoothTransition(true);
+			camera->viewOrientation(orientation);
+
+			Ptr<Viewport> viewport = Application::get()->activeViewport();
+			if (!viewport) {
+				Application::log("Failed to retrieve active viewport.");
+				return false;
+			}
+
+			viewport->camera(camera);
+			return true;
 		}
 	}
 }

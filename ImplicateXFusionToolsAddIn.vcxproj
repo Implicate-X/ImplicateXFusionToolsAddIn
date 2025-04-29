@@ -140,8 +140,10 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Component.h" />
     <ClInclude Include="ImplicateXFusionToolsAddIn.h" />
     <ClInclude Include="SketchTextPanel.h" />
+    <ClInclude Include="SketchTexts.h" />
     <ClInclude Include="Symbols.h" />
     <ClInclude Include="ToolsCommandControl.h" />
     <ClInclude Include="LanguageDropDownControl.h" />

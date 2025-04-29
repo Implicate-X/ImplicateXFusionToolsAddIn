@@ -5,19 +5,19 @@ using namespace adsk::cam;
 
 namespace implicatex {
 	namespace fusion {
-		const std::string IDS_CMD_SKETCH_TEXT_DEFINITIONS = "commandSketchTextDefinitions"; // commandSketchTextDefinitions
-		const std::string IDS_ITEM_DROPDOWN_SELECT_SKETCH = "dropdownSelectSketch"; // dropdownSelectSketch
-		const std::string IDS_ITEM_TAB_TEXTSIZE = "textSizeTab"; // textSizeTab
-		const std::string IDS_ITEM_TEXTSIZE_MIN = "textSizeMin"; // textSizeMin
-		const std::string IDS_ITEM_TEXTSIZE_MAX = "textSizeMax"; // textSizeMax
-		const std::string IDS_ITEM_TEXTSIZE_NEW = "textSizeNew"; // textSizeNew
-		const std::string IDS_ITEM_TEXTSIZE_FILTER = "textSizeFilter"; // textSizeFilter
-		const std::string IDS_ITEM_TEXTSIZE_MATCH = "textSizeMatch"; // textSizeMatch
-		const std::string IDS_ITEM_TEXTSIZE_SEPARATOR = "textSizeSeparator"; // textSizeSeparator
-		const std::string IDS_ITEM_TEXTSIZE_MATCH_SEPARATOR = "textSizeMatchSeparator"; // textSizeMatchSeparator
-		const std::string IDS_PATH_ICON_SKETCH_TEXT = "Resources/Sketch/Text"; // Resources/Sketch/Text
-		const std::string IDS_PATH_ICON_SKETCH_TEXTSIZE = "Resources/Sketch/Text/TextSize"; // Resources/Sketch/Text/TextSize
-		const std::string IDS_UNIT_MM = "mm"; // Millimeters
+		constexpr auto IDS_CMD_SKETCH_TEXT_DEFINITIONS = "commandSketchTextDefinitions"; // commandSketchTextDefinitions
+		constexpr auto IDS_ITEM_DROPDOWN_SELECT_SKETCH = "dropdownSelectSketch"; // dropdownSelectSketch
+		constexpr auto IDS_ITEM_TAB_TEXTSIZE = "textSizeTab"; // textSizeTab
+		constexpr auto IDS_ITEM_TEXTSIZE_MIN = "textSizeMin"; // textSizeMin
+		constexpr auto IDS_ITEM_TEXTSIZE_MAX = "textSizeMax"; // textSizeMax
+		constexpr auto IDS_ITEM_TEXTSIZE_NEW = "textSizeNew"; // textSizeNew
+		constexpr auto IDS_ITEM_TEXTSIZE_FILTER = "textSizeFilter"; // textSizeFilter
+		constexpr auto IDS_ITEM_TEXTSIZE_MATCH = "textSizeMatch"; // textSizeMatch
+		constexpr auto IDS_ITEM_TEXTSIZE_SEPARATOR = "textSizeSeparator"; // textSizeSeparator
+		constexpr auto IDS_ITEM_TEXTSIZE_MATCH_SEPARATOR = "textSizeMatchSeparator"; // textSizeMatchSeparator
+		constexpr auto IDS_PATH_ICON_SKETCH_TEXT = "Resources/Sketch/Text"; // Resources/Sketch/Text
+		constexpr auto IDS_PATH_ICON_SKETCH_TEXTSIZE = "Resources/Sketch/Text/TextSize"; // Resources/Sketch/Text/TextSize
+		constexpr auto IDS_UNIT_MM = "mm"; // Millimeters
 
 		/// <summary>
 		/// <para>SketchTextPanelCommandCreatedEventHandler implements the CommandCreatedEventHandler interface,</para>
@@ -49,24 +49,53 @@ namespace implicatex {
 			/// <para>The initialize function in the SketchTextPanel class is responsible</para>
 			/// <para>for setting up the palette by invoking the createCommand method.</para>
 			/// </summary>
+			///
+			/// <returns>True if it succeeds, false if it fails.</returns>
 			bool initialize();
 
 			/// <summary>
-			/// <para></para>
+			/// <para>The terminate function in the SketchTextPanel class is a boolean method </para>
+			/// <para>that calls and returns the result of the removeCommand function.</para>
 			/// </summary>
+			///
+			/// <returns>True if it succeeds, false if it fails.</returns>
 			bool terminate();
 
 			/// <summary>
-			/// <para>The createCommand function in the SketchTextDefinitionsPanel class is responsible</para>
-			/// <para>for creating and executing a new command definition for sketch text definitions</para>
-			/// <para>within the user interface of an application.</para>
+			/// <para>The createCommand function in the SketchTextPanel class is responsible</para>
+			/// <para>for creating and executing a new command definition for sketch text definitions.</para>
 			/// </summary>
+			///
+			/// <returns>True if it succeeds, false if it fails.</returns>
 			bool createCommand();
 
 			/// <summary>
-			/// <para>The removeCommand function in the SketchTextDefinitionsPanel class is responsible for removing</para>
-			/// <para>a command definition from the user interface if it exists, effectively cleaning up resources associated with that command.</para></summary>
+			/// <para>The removeCommand function in the SketchTextPanel class is responsible for removing</para>
+			/// <para>a command definition from the user interface if it exists, </para>
+			/// <para>effectively cleaning up resources associated with that command.</para>
+			/// </summary>
+			///
+			/// <returns>True if it succeeds, false if it fails.</returns>
 			bool removeCommand();
+
+			/// <summary>Filter text definitions by height.</summary>
+			///
+			/// <param name="sketch">		 The sketch.</param>
+			/// <param name="minHeightValue">The minimum height value.</param>
+			/// <param name="maxHeightValue">The maximum height value.</param>
+			///
+			/// <returns>A std::vector&lt;Ptr&lt;SketchText&gt;&gt;</returns>
+			std::vector<Ptr<SketchText>> filterTextDefinitionsByHeight(
+				const Ptr<Sketch>& sketch,
+				double minHeightValue,
+				double maxHeightValue);
+
+			/// <summary>Align model to sketch xy plane.</summary>
+			///
+			/// <param name="sketch">The sketch.</param>
+			///
+			/// <returns>True if it succeeds, false if it fails.</returns>
+			bool alignModelToSketchXYPlane(const Ptr<Sketch>& sketch);
 		};
 	}
 }
