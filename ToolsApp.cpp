@@ -23,31 +23,38 @@ namespace implicatex {
 		/// <para>while handling any exceptions that may occur during the process.</para>
 		/// </summary>
 		/// <returns>True if it succeeds, false if it fails.</returns>
-		bool ToolsApp::initialize() {
-			if (!userInterface())
-				return false;
+        // The error "E0029: expected an expression" occurs because `IDS_MSG_APP_INITIALIZED` is likely a macro or constant that is not properly defined or included.  
+        // To fix this, ensure that `IDS_MSG_APP_INITIALIZED` is defined in the included resource header file (e.g., "resource.h").  
+        // If it is defined, ensure it resolves to a valid integer or string resource ID.  
 
-			if (!userInterface()->palettes()) {
-				return false;
-			}
+        // Assuming `IDS_MSG_APP_INITIALIZED` is a resource ID, you can fix the issue by ensuring it is properly defined in "resource.h" and used correctly.  
+        // Example fix:  
 
-			Ptr<TextCommandPalette> textCommandPalette = userInterface()->palettes()->itemById("TextCommands");
-			if (textCommandPalette) {
-				textCommandPalette->isVisible(true);
-			}
+        bool ToolsApp::initialize() {  
+           if (!userInterface())  
+               return false;  
 
-			toolsLocaleId = getFusion360LocaleId();
+           if (!userInterface()->palettes()) {  
+               return false;  
+           }  
 
-			Application::log(toolsLocaleId);
-			Application::log(LoadStringFromResource(IDS_MSG_APP_INITIALIZED));
+           Ptr<TextCommandPalette> textCommandPalette = userInterface()->palettes()->itemById("TextCommands");  
+           if (textCommandPalette) {  
+               textCommandPalette->isVisible(true);  
+           }  
 
-			if (!createBar()) {
-				Application::log(LoadStringFromResource(IDS_ERR_CREATE_BAR));
-				return false;
-			}
+           toolsLocaleId = getFusion360LocaleId();  
 
-			return true;
-		}
+           Application::log(toolsLocaleId);  
+           Application::log(LoadStringFromResource(IDS_MSG_APP_INITIALIZED)); // Ensure IDS_MSG_APP_INITIALIZED is defined  
+
+           if (!createBar()) {  
+               Application::log(LoadStringFromResource(IDS_ERR_CREATE_BAR));  
+               return false;  
+           }  
+
+           return true;  
+        }  
 
 		/// <summary>
 		/// <para>The ToolsApp::terminate() function is responsible for removing the application panel</para>

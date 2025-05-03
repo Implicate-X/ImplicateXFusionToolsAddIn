@@ -13,6 +13,7 @@ namespace implicatex {
 		constexpr auto IDS_ITEM_TEXTSIZE_NEW = "textSizeNew"; // textSizeNew
 		constexpr auto IDS_ITEM_TEXTSIZE_FILTER = "textSizeFilter"; // textSizeFilter
 		constexpr auto IDS_ITEM_TEXTSIZE_MATCH = "textSizeMatch"; // textSizeMatch
+		constexpr auto IDS_ITEM_TEXTSIZE_REPLACE = "textSizeReplace"; // textSizeReplace
 		constexpr auto IDS_ITEM_TEXTSIZE_SEPARATOR = "textSizeSeparator"; // textSizeSeparator
 		constexpr auto IDS_ITEM_TEXTSIZE_MATCH_SEPARATOR = "textSizeMatchSeparator"; // textSizeMatchSeparator
 		constexpr auto IDS_PATH_ICON_SKETCH_TEXT = "Resources/Sketch/Text"; // Resources/Sketch/Text
@@ -96,6 +97,11 @@ namespace implicatex {
 			///
 			/// <returns>True if it succeeds, false if it fails.</returns>
 			bool alignModelToSketchXYPlane(const Ptr<Sketch>& sketch);
+
+			static void handleDropDownSelect(const Ptr<InputChangedEventArgs>& eventArgs);
+			static void handleTextSizeReplace(const Ptr<InputChangedEventArgs>& eventArgs);
+
+			std::unordered_map<std::string, void(*)(const Ptr<InputChangedEventArgs>& eventArgs)> idHandlers_;
 		};
 	}
 }

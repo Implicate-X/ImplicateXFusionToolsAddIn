@@ -21,9 +21,10 @@ namespace implicatex {
 			}
 
 			if (toolsUI) {
+				std::string selectSketchLabel = LoadStringFromResource(IDS_LABEL_SELECT_SKETCH);
 				Ptr<CommandDefinition> sketchTextPanelCommandDef = 
-					toolsUI->commandDefinitions()->addButtonDefinition(IDS_CMD_SKETCH_TEXT_DEFINITIONS,
-					LoadStringFromResource(IDS_LABEL_SKETCHTEXT), "Select a sketch from the dropdown");
+					toolsUI->commandDefinitions()
+							->addButtonDefinition(IDS_CMD_SKETCH_TEXT_DEFINITIONS, selectSketchLabel, selectSketchLabel);
 				if (sketchTextPanelCommandDef) {
                     auto handler = new SketchTextPanelCommandCreatedEventHandler();
 					if (!sketchTextPanelCommandDef->commandCreated()->add(handler)) {
@@ -71,9 +72,13 @@ namespace implicatex {
 		/// </summary>
 		///
 		/// <returns>True if it succeeds, false if it fails.</returns>
-		bool SketchTextPanel::initialize() {
-			return createCommand();
-		}
+        bool SketchTextPanel::initialize() {  
+			idHandlers_.insert({ std::string(IDS_ITEM_DROPDOWN_SELECT_SKETCH), &SketchTextPanel::handleDropDownSelect});
+			idHandlers_.insert({ std::string(IDS_ITEM_TEXTSIZE_REPLACE), &SketchTextPanel::handleTextSizeReplace});
+
+			
+           return createCommand();  
+        }
 
 		/// <summary>
 		/// <para>The terminate function in the SketchTextPanel class is a boolean method </para>
@@ -83,6 +88,19 @@ namespace implicatex {
 		/// <returns>True if it succeeds, false if it fails.</returns>
 		bool SketchTextPanel::terminate() {
 			return removeCommand();
+		}
+
+		void SketchTextPanel::handleDropDownSelect(const Ptr<InputChangedEventArgs>& eventArgs) {
+			Application::log("handleDropDownSelect");
+			Ptr<CommandInputs> inputs = eventArgs->inputs();
+			Ptr<DropDownCommandInput> dropdown = inputs->itemById(IDS_ITEM_DROPDOWN_SELECT_SKETCH);
+			Ptr<ListItem> selectedItem = dropdown->selectedItem();
+			std::string selectedSketchName = selectedItem->name();
+			Application::log("Selected Sketch: " + selectedSketchName);
+		}
+
+		void SketchTextPanel::handleTextSizeReplace(const Ptr<InputChangedEventArgs>& eventArgs) {
+			Application::log("handleTextSizeReplace");
 		}
 
 		/// <summary>
@@ -148,6 +166,20 @@ namespace implicatex {
 				textSizeTabInputs->addValueInput(IDS_ITEM_TEXTSIZE_NEW, 
 					LoadStringFromResource(IDS_LABEL_TEXTSIZE_NEW), IDS_UNIT_MM, newTextHeightInput);
 
+			std::string buttonLabel = LoadStringFromResource(IDS_LABEL_TEXTSIZE_REPLACE);
+
+			Ptr<BoolValueCommandInput> replaceButton = 
+				textSizeTabInputs->addBoolValueInput(IDS_ITEM_TEXTSIZE_REPLACE, buttonLabel, false);
+
+			if (!replaceButton) {
+				Application::log("Failed to add Replace button");
+				return;
+			}
+
+			replaceButton->tooltip(buttonLabel);
+			replaceButton->text(" " + buttonLabel);
+			replaceButton->resourceFolder(IDS_PATH_ICON_SKETCH_TEXTSIZE);
+
 			command->inputChanged()->add(new SketchTextPanelInputChangedEventHandler());
 		}
 
@@ -166,6 +198,15 @@ namespace implicatex {
 			Ptr<ValueCommandInput> maxTextHeight = inputs->itemById(IDS_ITEM_TEXTSIZE_MAX);
 			Ptr<TextBoxCommandInput> matchesTextHeightInput = inputs->itemById(IDS_ITEM_TEXTSIZE_MATCH);
 
+			std::string inputId = eventArgs->input()->id();
+			Application::log("InputChanged: " + inputId);
+
+			if (toolsApp->sketchTextPanel->idHandlers_.find(inputId) != toolsApp->sketchTextPanel->idHandlers_.end()) {
+				toolsApp->sketchTextPanel->idHandlers_[inputId](eventArgs);
+			} else {
+				Application::log("Unknown ID: " + inputId);
+			}
+			return;
 			if (selectedItem) {
 				std::string selectedSketchName = selectedItem->name();
 				Application::get()->log("InputChanged: " + selectedSketchName);
@@ -179,12 +220,12 @@ namespace implicatex {
 					return;
 				}
 
-				toolsApp->sketchTextPanel->alignModelToSketchXYPlane(sketch);
+				//toolsApp->sketchTextPanel->alignModelToSketchXYPlane(sketch);
 
 				auto filteredTexts = 
 					toolsApp->sketchTextPanel->filterTextDefinitionsByHeight(sketch, minHeightValue, maxHeightValue);
 
-				int textHeightMatchCount = filteredTexts.size();
+				size_t textHeightMatchCount = filteredTexts.size();
 
 				matchesTextHeightInput->text(std::to_string(textHeightMatchCount));
 
@@ -199,7 +240,10 @@ namespace implicatex {
 		}
 
 
-		/// <summary>Filter text definitions by height.</summary>
+		/// <summary>
+		/// <para>The filterTextDefinitionsByHeight function filters and returns a vector of SketchText pointers </para> 
+		/// <para>from a given Sketch, based on specified minimum and maximum height values.</para>
+		/// </summary>
 		///
 		/// <param name="sketch">		 The sketch.</param>
 		/// <param name="minHeightValue">The minimum height value.</param>
@@ -245,7 +289,10 @@ namespace implicatex {
 			return filteredTexts;
 		}
 
-		/// <summary>Align model to sketch xy plane.</summary>
+		/// <summary>
+		/// <para>The alignModelToSketchXYPlane function aligns the model's camera view to the XY plane </para>
+		/// <para>of a specified sketch, ensuring the camera is positioned correctly.</para>
+		/// </summary>
 		///
 		/// <param name="sketch">The sketch.</param>
 		///
