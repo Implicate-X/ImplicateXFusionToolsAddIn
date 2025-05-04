@@ -9,6 +9,9 @@
 
 namespace implicatex {
 	namespace fusion {
+		/// <summary>The sketch text panel sketch.</summary>
+		Ptr<Sketch> SketchTextPanel::sketch_ = nullptr;
+
 		/// <summary>
 		/// <para>The createCommand function in the SketchTextPanel class is responsible</para>
 		/// <para>for creating and executing a new command definition for sketch text definitions.</para>
@@ -90,15 +93,38 @@ namespace implicatex {
 			return removeCommand();
 		}
 
+		/// <summary>
+		/// <para>The handleDropDownSelect function processes the selection of a dropdown menu item related to sketches,</para>
+		/// <para>logging the selected sketch name and aligning the model to the corresponding sketch's XY plane if found.</para>
+		/// </summary>
+		///
+		/// <param name="eventArgs">
+		/// <para> is a constant reference to a pointer of type InputChangedEventArgs </para>
+		/// <para>which likely encapsulates information about changes to input events in the Autodesk API.</para>
+		/// </param>
 		void SketchTextPanel::handleDropDownSelect(const Ptr<InputChangedEventArgs>& eventArgs) {
 			Application::log("handleDropDownSelect");
-			Ptr<CommandInputs> inputs = eventArgs->inputs();
-			Ptr<DropDownCommandInput> dropdown = inputs->itemById(IDS_ITEM_DROPDOWN_SELECT_SKETCH);
+			Ptr<DropDownCommandInput> dropdown = eventArgs->input();
 			Ptr<ListItem> selectedItem = dropdown->selectedItem();
 			std::string selectedSketchName = selectedItem->name();
 			Application::log("Selected Sketch: " + selectedSketchName);
+			if (selectedItem) {
+				Ptr<Design> design = toolsApp->activeProduct();
+				SketchTextPanel::sketch_ = design->rootComponent()->sketches()->itemByName(selectedSketchName);
+				if (!SketchTextPanel::sketch_) {
+					Application::log("handleDropDownSelect: Sketch not found");
+					return;
+				}
+				toolsApp->sketchTextPanel->alignModelToSketchXYPlane(SketchTextPanel::sketch_);
+			}
+			else {
+				Application::get()->log("handleDropDownSelect: No sketch selected");
+			}
 		}
 
+		/// <summary>Handles the text size replace described by eventArgs.</summary>
+		///
+		/// <param name="eventArgs">The event arguments.</param>
 		void SketchTextPanel::handleTextSizeReplace(const Ptr<InputChangedEventArgs>& eventArgs) {
 			Application::log("handleTextSizeReplace");
 		}
@@ -207,38 +233,20 @@ namespace implicatex {
 				Application::log("Unknown ID: " + inputId);
 			}
 			return;
-			if (selectedItem) {
-				std::string selectedSketchName = selectedItem->name();
-				Application::get()->log("InputChanged: " + selectedSketchName);
-				double minHeightValue = minTextHeight->value();
-				double maxHeightValue = maxTextHeight->value();
+		}
 
-				Ptr<Design> design = toolsApp->activeProduct();
-				Ptr<Sketch> sketch = design->rootComponent()->sketches()->itemByName(selectedSketchName);
-				if (!sketch) {
-					Application::log("InputChanged: Sketch not found");
-					return;
-				}
+//				double minHeightValue = minTextHeight->value();
+//				double maxHeightValue = maxTextHeight->value();
+				//auto filteredTexts = 
+				//	toolsApp->sketchTextPanel->filterTextDefinitionsByHeight(sketch, minHeightValue, maxHeightValue);
 
-				//toolsApp->sketchTextPanel->alignModelToSketchXYPlane(sketch);
+				//size_t textHeightMatchCount = filteredTexts.size();
 
-				auto filteredTexts = 
-					toolsApp->sketchTextPanel->filterTextDefinitionsByHeight(sketch, minHeightValue, maxHeightValue);
-
-				size_t textHeightMatchCount = filteredTexts.size();
-
-				matchesTextHeightInput->text(std::to_string(textHeightMatchCount));
+				//matchesTextHeightInput->text(std::to_string(textHeightMatchCount));
 
 				//for (const auto& text : filteredTexts) {
 				//	Application::log("Filtered Text: " + text->text());
 				//}
-
-			}
-			else {
-				Application::get()->log("InputChanged: No sketch selected");
-			}
-		}
-
 
 		/// <summary>
 		/// <para>The filterTextDefinitionsByHeight function filters and returns a vector of SketchText pointers </para> 
@@ -294,7 +302,10 @@ namespace implicatex {
 		/// <para>of a specified sketch, ensuring the camera is positioned correctly.</para>
 		/// </summary>
 		///
-		/// <param name="sketch">The sketch.</param>
+		/// <param name="sketch">
+		/// <para> is a constant reference to a smart pointer that manages an instance of the Sketch class, </para>
+		/// <para>allowing for efficient memory management and access to sketch-related functionalities.</para>
+		/// </param>
 		///
 		/// <returns>True if it succeeds, false if it fails.</returns>
 		bool SketchTextPanel::alignModelToSketchXYPlane(const Ptr<Sketch>& sketch) {

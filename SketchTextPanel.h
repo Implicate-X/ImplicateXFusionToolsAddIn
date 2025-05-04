@@ -101,6 +101,7 @@ namespace implicatex {
 			static void handleDropDownSelect(const Ptr<InputChangedEventArgs>& eventArgs);
 			static void handleTextSizeReplace(const Ptr<InputChangedEventArgs>& eventArgs);
 
+			static Ptr<Sketch> sketch_;
 			std::unordered_map<std::string, void(*)(const Ptr<InputChangedEventArgs>& eventArgs)> idHandlers_;
 		};
 	}
