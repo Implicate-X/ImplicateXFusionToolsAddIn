@@ -13,6 +13,7 @@ namespace implicatex {
 		constexpr auto IDS_ITEM_TEXTSIZE_NEW = "textSizeNew"; // textSizeNew
 		constexpr auto IDS_ITEM_TEXTSIZE_FILTER = "textSizeFilter"; // textSizeFilter
 		constexpr auto IDS_ITEM_TEXTSIZE_MATCH = "textSizeMatch"; // textSizeMatch
+		constexpr auto IDS_ITEM_TEXTSIZE_TABLE = "textSizeTable"; // textSizeTable
 		constexpr auto IDS_ITEM_TEXTSIZE_REPLACE = "textSizeReplace"; // textSizeReplace
 		constexpr auto IDS_ITEM_TEXTSIZE_SEPARATOR = "textSizeSeparator"; // textSizeSeparator
 		constexpr auto IDS_ITEM_TEXTSIZE_MATCH_SEPARATOR = "textSizeMatchSeparator"; // textSizeMatchSeparator
@@ -79,17 +80,10 @@ namespace implicatex {
 			/// <returns>True if it succeeds, false if it fails.</returns>
 			bool removeCommand();
 
-			/// <summary>Filter text definitions by height.</summary>
-			///
-			/// <param name="sketch">		 The sketch.</param>
-			/// <param name="minHeightValue">The minimum height value.</param>
-			/// <param name="maxHeightValue">The maximum height value.</param>
-			///
-			/// <returns>A std::vector&lt;Ptr&lt;SketchText&gt;&gt;</returns>
-			std::vector<Ptr<SketchText>> filterTextDefinitionsByHeight(
-				const Ptr<Sketch>& sketch,
-				double minHeightValue,
-				double maxHeightValue);
+			bool addTextSizeTab(const Ptr<CommandInputs>& inputs, Ptr<CommandInputs>& tabInputs);
+			bool addSketchDropDown(const Ptr<CommandInputs>& inputs, Ptr<DropDownCommandInput>& dropdown);
+			bool addTextSizeFilter(const Ptr<CommandInputs>& inputs);
+			bool addTextSizeMatch(const Ptr<CommandInputs>& inputs);
 
 			/// <summary>Align model to sketch xy plane.</summary>
 			///
@@ -98,10 +92,13 @@ namespace implicatex {
 			/// <returns>True if it succeeds, false if it fails.</returns>
 			bool alignModelToSketchXYPlane(const Ptr<Sketch>& sketch);
 
+			bool getSelectedSketch(const Ptr<DropDownCommandInput>& dropdown, Ptr<Sketch>& sketch);
+			bool getTextSizeMatch(const Ptr<CommandInputs>& inputs, std::vector<Ptr<SketchText>>& filteredTexts);
+
 			static void handleDropDownSelect(const Ptr<InputChangedEventArgs>& eventArgs);
 			static void handleTextSizeReplace(const Ptr<InputChangedEventArgs>& eventArgs);
+			static void handleTextSizeChange(const Ptr<InputChangedEventArgs>& eventArgs);
 
-			static Ptr<Sketch> sketch_;
 			std::unordered_map<std::string, void(*)(const Ptr<InputChangedEventArgs>& eventArgs)> idHandlers_;
 		};
 	}
