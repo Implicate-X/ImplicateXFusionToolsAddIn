@@ -94,11 +94,19 @@ namespace implicatex {
 
 			bool getSelectedSketch(const Ptr<DropDownCommandInput>& dropdown, Ptr<Sketch>& sketch);
 			bool getTextSizeMatch(const Ptr<CommandInputs>& inputs, std::vector<Ptr<SketchText>>& filteredTexts);
+			bool getTextPoints(const Ptr<SketchText>& sketchText, Ptr<Point3D>& centerPoint, Ptr<Point3D>& minPoint, Ptr<Point3D>& maxPoint);
 
 			static void handleDropDownSelect(const Ptr<InputChangedEventArgs>& eventArgs);
 			static void handleTextSizeReplace(const Ptr<InputChangedEventArgs>& eventArgs);
 			static void handleTextSizeChange(const Ptr<InputChangedEventArgs>& eventArgs);
 
+			//void blinkTextPosition(const Ptr<SketchText>& text);
+			void addHighlightGraphics(const Ptr<SketchText>& text);
+			void focusCameraOnText(const Ptr<SketchText>& sketchText);
+			//void duplicateAndHighlightText(const Ptr<SketchText>& text);
+			Ptr<Point3D> getTextPosition(const Ptr<SketchText>& sketchText);
+
+			std::unordered_map<std::string, Ptr<SketchText>> sketchTextMap_;
 			std::unordered_map<std::string, void(*)(const Ptr<InputChangedEventArgs>& eventArgs)> idHandlers_;
 		};
 	}

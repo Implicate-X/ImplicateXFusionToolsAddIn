@@ -45,11 +45,11 @@ namespace implicatex {
 
            toolsLocaleId = getFusion360LocaleId();  
 
-           Application::log(toolsLocaleId);  
-           Application::log(LoadStringFromResource(IDS_MSG_APP_INITIALIZED)); // Ensure IDS_MSG_APP_INITIALIZED is defined  
+           TRACE(toolsLocaleId);  
+           TRACE(LoadStringFromResource(IDS_MSG_APP_INITIALIZED)); // Ensure IDS_MSG_APP_INITIALIZED is defined  
 
            if (!createBar()) {  
-               Application::log(LoadStringFromResource(IDS_ERR_CREATE_BAR));  
+               TRACE(LoadStringFromResource(IDS_ERR_CREATE_BAR));  
                return false;  
            }  
 
@@ -61,8 +61,22 @@ namespace implicatex {
 		/// <para>and logging a termination message when the application is closed.</para>
 		/// </summary>
 		void ToolsApp::terminate() {
+			Ptr<Design> design = activeProduct();
+			Ptr<Component> root = design->rootComponent();
+
+			if (root->customGraphicsGroups()->count() > 0) {
+				for (size_t i = 0; i < root->customGraphicsGroups()->count(); ++i) {
+					Ptr<CustomGraphicsGroup> group = root->customGraphicsGroups()->item(i);
+					if (group) {
+						group->deleteMe();
+					}
+				}
+				TRACE("ToolsApp: Deleted existing graphics.");
+				toolsApp->activeViewport()->refresh();
+			}
+
 			removeBar();
-			Application::log(LoadStringFromResource(IDS_MSG_APP_TERMINATED));
+			TRACE(LoadStringFromResource(IDS_MSG_APP_TERMINATED));
 		}
 
 		/// <summary>
@@ -204,7 +218,7 @@ namespace implicatex {
 					localeLanguageRegionMap.insert({ locale, languageRegionName });
 				}
 				else {
-					Application::log("Error creating LocaleBuilder: " + std::to_string(status));
+					TRACE("Error creating LocaleBuilder: " + std::to_string(status));
 				}
 
 				languageRegionName.clear();

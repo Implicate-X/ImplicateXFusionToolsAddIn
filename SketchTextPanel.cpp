@@ -43,7 +43,7 @@ namespace implicatex {
 			if (!removeCommand()) {
 				return false;
 			}
-
+			
 			if (toolsUI) {
 				std::string selectSketchLabel = LoadStringFromResource(IDS_LABEL_SELECT_SKETCH);
 				Ptr<CommandDefinition> sketchTextPanelCommandDef = 
@@ -52,16 +52,16 @@ namespace implicatex {
 				if (sketchTextPanelCommandDef) {
                     auto handler = new SketchTextPanelCommandCreatedEventHandler();
 					if (!sketchTextPanelCommandDef->commandCreated()->add(handler)) {
-						Application::log("Failed to add event handler for SketchTextPanelCommandCreatedEventHandler");
+						TRACE("Failed to add event handler for SketchTextPanelCommandCreatedEventHandler");
 						return false;
 					}
 					if (!sketchTextPanelCommandDef->execute()) {
-						Application::log("Failed to execute SketchTextPanelCommandCreatedEventHandler");
+						TRACE("Failed to execute SketchTextPanelCommandCreatedEventHandler");
 						return false;
 					}
 				}
 				else {
-					Application::log("Failed to add button definition for SketchTextPanelCommand");
+					TRACE("Failed to add button definition for SketchTextPanelCommand");
 					return false;
 				}
 			}
@@ -80,7 +80,7 @@ namespace implicatex {
 					toolsUI->commandDefinitions()->itemById(IDS_CMD_SKETCH_TEXT_DEFINITIONS);
 				if (sketchTextPanelCommandDef) {
 					if (!sketchTextPanelCommandDef->deleteMe()) {
-						Application::log("Failed to delete SketchTextPanelCommand");
+						TRACE("Failed to delete SketchTextPanelCommand");
 						sketchTextPanelCommandDef = nullptr;
 						return false;
 					}
@@ -103,7 +103,7 @@ namespace implicatex {
 
 			tabInputs = textSizeTab->children();
 			if (!tabInputs) {
-				Application::log("Failed to add tab command input");
+				TRACE("Failed to add tab command input");
 				return false;
 			}
 
@@ -118,7 +118,7 @@ namespace implicatex {
 		/// <returns>True if it succeeds, false if it fails.</returns>
 		bool SketchTextPanel::addSketchDropDown(const Ptr<CommandInputs>& inputs, Ptr<DropDownCommandInput>& dropdown) {
 			if (!inputs) {
-				Application::log("AddSketchDropDown: Invalid inputs");
+				TRACE("AddSketchDropDown: Invalid inputs");
 				return false;
 			}
 			std::string selectSketchLabel = LoadStringFromResource(IDS_LABEL_SELECT_SKETCH);
@@ -143,7 +143,7 @@ namespace implicatex {
 				inputs->addTextBoxCommandInput(IDS_ITEM_TEXTSIZE_FILTER, "",
 					LoadStringFromResource(IDS_LABEL_FILTER_TEXTSIZE_RANGE), 1, true);
 			if (!textInput) {
-				Application::log("Failed to add text box command input");
+				TRACE("Failed to add text box command input");
 				return false;
 			}
 			Ptr<ValueInput> minTextHeightInput = ValueInput::createByReal(0.0);
@@ -153,14 +153,14 @@ namespace implicatex {
 				inputs->addValueInput(IDS_ITEM_TEXTSIZE_MIN, 
 					LoadStringFromResource(IDS_LABEL_TEXTSIZE_MIN), IDS_UNIT_MM, minTextHeightInput);
 			if (!minTextHeight) {
-				Application::log("Failed to add min text height command input");
+				TRACE("Failed to add min text height command input");
 				return false;
 			}
 			Ptr<ValueCommandInput> maxTextHeight = 
 				inputs->addValueInput(IDS_ITEM_TEXTSIZE_MAX, 
 					LoadStringFromResource(IDS_LABEL_TEXTSIZE_MAX), IDS_UNIT_MM, maxTextHeightInput);
 			if (!maxTextHeight) {
-				Application::log("Failed to add max text height command input");
+				TRACE("Failed to add max text height command input");
 				return false;
 			}
 			return true;
@@ -176,12 +176,12 @@ namespace implicatex {
 				inputs->addTextBoxCommandInput(IDS_ITEM_TEXTSIZE_MATCH, 
 					LoadStringFromResource(IDS_LABEL_TEXTSIZE_MATCH), "", 1, true);
 			if (!textSizeMatch) {
-				Application::log("Failed to add text size match command input");
+				TRACE("Failed to add text size match command input");
 				return false;
 			}
 			std::vector<Ptr<SketchText>> filteredTexts;
 			if (!toolsApp->sketchTextPanel->getTextSizeMatch(inputs, filteredTexts)) {
-				Application::log("addTextSizeMatch: Failed to get text size match");
+				TRACE("addTextSizeMatch: Failed to get text size match");
 				return false;
 			}
 			Ptr<TableCommandInput> tableInput = 
@@ -192,11 +192,13 @@ namespace implicatex {
 			);
 
 			if (!tableInput) {
-				Application::log("Failed to add TableCommandInput");
+				TRACE("Failed to add TableCommandInput");
 				return false;
 			}
 
-			for (size_t i = 0; i < filteredTexts.size(); ++i) {
+			sketchTextMap_.clear();
+
+			for (int i = 0; i < (int)filteredTexts.size(); ++i) {
 				Ptr<SketchText> text = filteredTexts[i];
 
 				// Spalte 1: ID (nur lesbar)
@@ -209,21 +211,26 @@ namespace implicatex {
 				tableInput->addCommandInput(idInput, i, 0);
 
 				// Spalte 2: Text (bearbeitbar)
+				std::string textValueId = "TextValue_" + std::to_string(i);
 				Ptr<StringValueCommandInput> textInput = inputs->addStringValueInput(
-					"TextValue_" + std::to_string(i), 
+					textValueId, 
 					"", 
 					text->text()
 				);
 				tableInput->addCommandInput(textInput, i, 1);
 
 				// Spalte 3: Höhe (bearbeitbar)
+				std::string textHeightId = "TextHeight_" + std::to_string(i);
 				Ptr<ValueCommandInput> heightInput = inputs->addValueInput(
-					"TextHeight_" + std::to_string(i), 
+					textHeightId, 
 					"", 
 					IDS_UNIT_MM, 
 					ValueInput::createByReal(text->height())
 				);
 				tableInput->addCommandInput(heightInput, i, 2);
+
+				sketchTextMap_[textValueId] = text;
+				sketchTextMap_[textHeightId] = text;
 			}
 
 			return true;
@@ -237,7 +244,7 @@ namespace implicatex {
 		/// <returns>True if it succeeds, false if it fails.</returns>
 		bool SketchTextPanel::getSelectedSketch(const Ptr<DropDownCommandInput>& dropdown, Ptr<Sketch>& sketch) {
 			if (!dropdown) {
-				Application::log("getSelectedSketch: Invalid dropdown input");
+				TRACE("getSelectedSketch: Invalid dropdown input");
 				return false;
 			}
 			Ptr<ListItem> selectedItem = dropdown->selectedItem();
@@ -247,23 +254,24 @@ namespace implicatex {
 				Ptr<Component> root = design->rootComponent();
 				Ptr<Sketches> sketches = root->sketches();
 				if (!sketches) {
-					Application::log("getSelectedSketch: No sketches found");
+					TRACE("getSelectedSketch: No sketches found");
 					return false;
 				}
 				if (sketches->count() <= 0) {
-					Application::log("getSelectedSketch: No sketches found");
+					TRACE("getSelectedSketch: No sketches found");
 					return false;
 				}
 				sketch = sketches->itemByName(selectedSketchName);
 				if (!sketch) {
-					Application::log("getSelectedSketch: Sketch not found");
+					TRACE("getSelectedSketch: Sketch not found");
 					return false;
 				}
 			}
 			else {
-				Application::log("getSelectedSketch: No sketch selected");
+				TRACE("getSelectedSketch: No sketch selected");
 				return false;
 			}
+
 			return true;
 		}
 
@@ -277,11 +285,11 @@ namespace implicatex {
 		/// <para>which likely encapsulates information about changes to input events in the Autodesk API.</para>
 		/// </param>
 		void SketchTextPanel::handleDropDownSelect(const Ptr<InputChangedEventArgs>& eventArgs) {
-			Application::log("handleDropDownSelect");
+			TRACE("handleDropDownSelect");
 			Ptr<DropDownCommandInput> dropdown = eventArgs->input();
 			Ptr<Sketch> sketch = nullptr;
 			if (!toolsApp->sketchTextPanel->getSelectedSketch(dropdown, sketch)) {
-				Application::log("handleDropDownSelect: Failed to get selected sketch");
+				TRACE("handleDropDownSelect: Failed to get selected sketch");
 				return;
 			}
 			toolsApp->sketchTextPanel->alignModelToSketchXYPlane(sketch);
@@ -291,14 +299,14 @@ namespace implicatex {
 		///
 		/// <param name="eventArgs">The event arguments.</param>
 		void SketchTextPanel::handleTextSizeReplace(const Ptr<InputChangedEventArgs>& eventArgs) {
-			Application::log("handleTextSizeReplace");
+			TRACE("handleTextSizeReplace");
 		}
 
 		/// <summary>Handles the text size change described by eventArgs.</summary>
 		///
 		/// <param name="eventArgs">The event arguments.</param>
 		void SketchTextPanel::handleTextSizeChange(const Ptr<InputChangedEventArgs>& eventArgs) {
-			Application::log("handleTextSizeChange");
+			TRACE("handleTextSizeChange");
 
 			Ptr<CommandInputs> inputs = eventArgs->inputs();
 			if (!inputs)
@@ -306,7 +314,7 @@ namespace implicatex {
 
 			std::vector<Ptr<SketchText>> filteredTexts;
 			if (!toolsApp->sketchTextPanel->getTextSizeMatch(inputs, filteredTexts)) {
-				Application::log("handleTextSizeChange: Failed to get text size match");
+				TRACE("handleTextSizeChange: Failed to get text size match");
 				return;
 			}
 		}
@@ -324,7 +332,7 @@ namespace implicatex {
 
 			Ptr<Sketch> sketch = nullptr;
 			if (!toolsApp->sketchTextPanel->getSelectedSketch(dropdown, sketch)) {
-				Application::log("getTextSizeMatchCount: Failed to get selected sketch");
+				TRACE("getTextSizeMatchCount: Failed to get selected sketch");
 				return false;
 			}
 
@@ -333,12 +341,28 @@ namespace implicatex {
 
 			Ptr<SketchTexts> sketchTexts = sketch->sketchTexts();
 			if (!sketchTexts) {
-				Application::log("No SketchTexts found in the sketch.");
+				TRACE("No SketchTexts found in the sketch.");
 				return false;
 			}
 
 			for (size_t i = 0; i < sketchTexts->count(); ++i) {
 				Ptr<SketchText> text = sketchTexts->item(i);
+				Ptr<Point3D> minPoint = text->boundingBox()->minPoint();
+				Ptr<Point3D> maxPoint = text->boundingBox()->maxPoint();
+				if (!minPoint || !maxPoint) {
+					TRACE("getTextSizeMatch: Failed to get bounding box points");
+					return false;
+				}
+
+				Ptr<Point3D> center = Point3D::create(
+					(minPoint->x() + maxPoint->x()) / 2.0,
+					(minPoint->y() + maxPoint->y()) / 2.0,
+					(minPoint->z() + maxPoint->z()) / 2.0
+				);
+				//TRACE("Min: " + std::to_string(minPoint->x()) + ", " + std::to_string(minPoint->y()) + ", " + std::to_string(minPoint->z()));
+				//TRACE("Max: " + std::to_string(maxPoint->x()) + ", " + std::to_string(maxPoint->y()) + ", " + std::to_string(maxPoint->z()));
+				//TRACE("Center: " + std::to_string(center->x()) + ", " + std::to_string(center->y()) + ", " + std::to_string(center->z()));
+
 				if (text) {
 					double textHeight = text->height();
 					if (textHeight >= minHeightValue && textHeight <= maxHeightValue) {
@@ -352,8 +376,75 @@ namespace implicatex {
 			matchesTextHeightInput->text(std::to_string(textHeightMatchCount));
 
 			//for (const auto& text : filteredTexts) {
-			//	Application::log("Filtered Text: " + text->text());
+			//	TRACE("Filtered Text: " + text->text());
 			//}
+			return true;
+		}
+
+		/// <summary>Gets text points.</summary>
+		///
+		/// <param name="sketchText"> The sketch text.</param>
+		/// <param name="centerPoint">[in,out] The center point.</param>
+		/// <param name="minPoint">   [in,out] The minimum point.</param>
+		/// <param name="maxPoint">   [in,out] The maximum point.</param>
+		///
+		/// <returns>True if it succeeds, false if it fails.</returns>
+		bool SketchTextPanel::getTextPoints(const Ptr<SketchText>& sketchText, Ptr<Point3D>& centerPoint, Ptr<Point3D>& minPoint, Ptr<Point3D>& maxPoint) {
+			if (!sketchText) {
+				TRACE("getTextPoints: Invalid SketchText");
+				return false;
+			}
+
+			Ptr<SketchTextDefinition> textDef = sketchText->definition();
+			Ptr<MultiLineTextDefinition> multiLineTextDef = textDef;
+			if (!multiLineTextDef) {
+				TRACE("getTextPoints: No MultiLineTextDefinition found for the sketch text.");
+				return false;
+			}
+
+			std::vector<Ptr<SketchLine>> lines = multiLineTextDef->rectangleLines();
+			if (lines.size() != 4) {
+				TRACE("getTextPoints: rectangleLines does not have the expected number of lines.");
+				return false;
+			}
+
+			double minX = (std::numeric_limits<double>::max)();
+			double minY = (std::numeric_limits<double>::max)();
+			double maxX = std::numeric_limits<double>::lowest();
+			double maxY = std::numeric_limits<double>::lowest();
+
+			for (const auto& line : lines) {
+				if (!line) continue;
+
+				Ptr<Point3D> startPoint = line->startSketchPoint()->geometry();
+				Ptr<Point3D> endPoint = line->endSketchPoint()->geometry();
+
+				if (startPoint) {
+					minX = (std::min)(minX, startPoint->x());
+					minY = (std::min)(minY, startPoint->y());
+					maxX = (std::max)(maxX, startPoint->x());
+					maxY = (std::max)(maxY, startPoint->y());
+				}
+
+				if (endPoint) {
+					minX = (std::min)(minX, endPoint->x());
+					minY = (std::min)(minY, endPoint->y());
+					maxX = (std::max)(maxX, endPoint->x());
+					maxY = (std::max)(maxY, endPoint->y());
+				}
+			}
+			if (minX == (std::numeric_limits<double>::max)() || minY == (std::numeric_limits<double>::max)() ||
+				maxX == std::numeric_limits<double>::lowest() || maxY == std::numeric_limits<double>::lowest()) {
+				TRACE("getTextPoints: No valid points found for the bounding box.");
+				return false;
+			}
+			double centerX = (minX + maxX) / 2.0;
+			double centerY = (minY + maxY) / 2.0;
+
+			minPoint = Point3D::create(minX, minY, 0.0);
+			maxPoint = Point3D::create(maxX, maxY, 0.0);
+			centerPoint = Point3D::create(centerX, centerY, 0.0);
+
 			return true;
 		}
 
@@ -370,39 +461,39 @@ namespace implicatex {
 		/// <returns>True if it succeeds, false if it fails.</returns>
 		bool SketchTextPanel::alignModelToSketchXYPlane(const Ptr<Sketch>& sketch) {
 			if (!sketch) {
-				Application::log("Invalid sketch provided.");
+				TRACE("Invalid sketch provided.");
 				return false;
 			}
 
 			Ptr<Vector3D> sketchXDirection = sketch->xDirection();
 			Ptr<Vector3D> sketchYDirection = sketch->yDirection();
 			if (!sketchXDirection || !sketchYDirection) {
-				Application::log("Failed to retrieve sketch directions.");
+				TRACE("Failed to retrieve sketch directions.");
 				return false;
 			}
 
 			Ptr<Vector3D> sketchZDirection = sketchXDirection->crossProduct(sketchYDirection);
 			if (!sketchZDirection) {
-				Application::log("Failed to calculate sketch Z direction.");
+				TRACE("Failed to calculate sketch Z direction.");
 				return false;
 			}
 
 			Ptr<Point3D> sketchOrigin = sketch->origin();
 			if (!sketchOrigin) {
-				Application::log("Failed to retrieve sketch origin.");
+				TRACE("Failed to retrieve sketch origin.");
 				return false;
 			}
 
 			Ptr<BoundingBox3D> boundingBox = sketch->boundingBox();
 			if (!boundingBox) {
-				Application::log("Failed to retrieve bounding box of the sketch.");
+				TRACE("Failed to retrieve bounding box of the sketch.");
 				return false;
 			}
 
 			Ptr<Point3D> minPoint = boundingBox->minPoint();
 			Ptr<Point3D> maxPoint = boundingBox->maxPoint();
 			if (!minPoint || !maxPoint) {
-				Application::log("Failed to retrieve bounding box points.");
+				TRACE("Failed to retrieve bounding box points.");
 				return false;
 			}
 
@@ -424,11 +515,11 @@ namespace implicatex {
 			} else {
 				orientation = ViewOrientations::BottomViewOrientation;
 			}
-			Application::log("Orientation: " + std::to_string(static_cast<int>(orientation)));
+			TRACE("Orientation: " + std::to_string(static_cast<int>(orientation)));
 
 			Ptr<Camera> camera = Camera::create();
 			if (!camera) {
-				Application::log("Failed to create camera.");
+				TRACE("Failed to create camera.");
 				return false;
 			}
 			
@@ -440,7 +531,7 @@ namespace implicatex {
 
 			Ptr<Viewport> viewport = Application::get()->activeViewport();
 			if (!viewport) {
-				Application::log("Failed to retrieve active viewport.");
+				TRACE("Failed to retrieve active viewport.");
 				return false;
 			}
 
@@ -462,33 +553,33 @@ namespace implicatex {
 			Ptr<CommandInputs> inputs = command->commandInputs();
 
 			if (!inputs) {
-				Application::log("Failed to get command inputs");
+				TRACE("Failed to get command inputs");
 				return;
 			}
 
 			Ptr<CommandInputs> textSizeTabInputs = nullptr;
 			if (!toolsApp->sketchTextPanel->addTextSizeTab(inputs, textSizeTabInputs)) {
-				Application::log("Failed to add tab command input");
+				TRACE("Failed to add tab command input");
 				return;
 			}
 
 			Ptr<DropDownCommandInput> dropdown = nullptr;
 			if (!toolsApp->sketchTextPanel->addSketchDropDown(textSizeTabInputs, dropdown)) {
-				Application::log("Failed to add dropdown command input");
+				TRACE("Failed to add dropdown command input");
 				return;
 			}
 
 			textSizeTabInputs->addSeparatorCommandInput(IDS_ITEM_TEXTSIZE_SEPARATOR);
 
 			if (!toolsApp->sketchTextPanel->addTextSizeFilter(textSizeTabInputs)) {
-				Application::log("Failed to add text size filter");
+				TRACE("Failed to add text size filter");
 				return;
 			}
 
 			textSizeTabInputs->addSeparatorCommandInput(IDS_ITEM_TEXTSIZE_MATCH_SEPARATOR);
 
 			if (!toolsApp->sketchTextPanel->addTextSizeMatch(textSizeTabInputs)) {
-				Application::log("Failed to add text size match");
+				TRACE("Failed to add text size match");
 				return;
 			}
 
@@ -505,7 +596,7 @@ namespace implicatex {
 				textSizeTabInputs->addBoolValueInput(IDS_ITEM_TEXTSIZE_REPLACE, buttonLabel, false);
 
 			if (!replaceButton) {
-				Application::log("Failed to add Replace button");
+				TRACE("Failed to add Replace button");
 				return;
 			}
 
@@ -517,7 +608,7 @@ namespace implicatex {
 
 			std::vector<Ptr<SketchText>> filteredTexts;
 			if (!toolsApp->sketchTextPanel->getTextSizeMatch(inputs, filteredTexts)) {
-				Application::log("SketchTextPanelCommandCreatedEventHandler::notify: Failed to get text size match count");
+				TRACE("SketchTextPanelCommandCreatedEventHandler::notify: Failed to get text size match count");
 				return;
 			}
 		}
@@ -531,35 +622,359 @@ namespace implicatex {
 		/// </param>
 		void SketchTextPanelInputChangedEventHandler::notify(const Ptr<InputChangedEventArgs>& eventArgs) {
 			std::string inputId = eventArgs->input()->id();
-			Application::log("InputChanged: " + inputId);
+			TRACE("InputChanged: " + inputId);
+
+			auto it = toolsApp->sketchTextPanel->sketchTextMap_.find(inputId);
+			if (it != toolsApp->sketchTextPanel->sketchTextMap_.end()) {
+				Ptr<SketchText> sketchText = it->second;
+				if (sketchText) {
+					TRACE("Text = " + toolsApp->sketchTextPanel->sketchTextMap_[inputId]->text() + " - SketchText = " + sketchText->text());
+
+
+					//toolsApp->sketchTextPanel->addHighlightGraphics(sketchText);
+					toolsApp->sketchTextPanel->focusCameraOnText(sketchText);
+
+				//for (int i = 0; i < 3; ++i) {
+					//	TextStyles originalStyle = sketchText->textStyle();
+					//	std::this_thread::sleep_for(std::chrono::milliseconds(300)); // 300ms warten
+					//	sketchText->textStyle((TextStyles)(TextStyles::TextStyleBold | TextStyles::TextStyleUnderline));
+					//	std::this_thread::sleep_for(std::chrono::milliseconds(300)); // 300ms warten
+					//	sketchText->textStyle(originalStyle);
+					//}
+				}
+				else {
+					TRACE("SketchText not found for input ID: " + inputId);
+				}
+			}
+
 			Ptr<CommandInputs> inputs = eventArgs->inputs();
 			if (!inputs) {
-				Application::log("SketchTextPanelCommandCreatedEventHandler::notify: Invalid inputs");
+				TRACE("SketchTextPanelCommandCreatedEventHandler::notify: Invalid inputs");
 				return;
 			}
 			std::vector<Ptr<SketchText>> filteredTexts;
 			if (!toolsApp->sketchTextPanel->getTextSizeMatch(inputs, filteredTexts)) {
-				Application::log("SketchTextPanelCommandCreatedEventHandler::notify: Failed to get text size match");
+				TRACE("SketchTextPanelCommandCreatedEventHandler::notify: Failed to get text size match");
 				return;
 			}
-
+			
 			if (toolsApp->sketchTextPanel->idHandlers_.find(inputId) != toolsApp->sketchTextPanel->idHandlers_.end()) {
 				toolsApp->sketchTextPanel->idHandlers_[inputId](eventArgs);
 			} else {
-				Application::log("Unknown ID: " + inputId);
+				TRACE("Unknown ID: " + inputId);
 			}
 			return;
+		}
+
+		//void SketchTextPanel::blinkTextPosition(const Ptr<SketchText>& text) {
+		//	if (!text) {
+		//		TRACE("blinkTextPosition: Invalid SketchText");
+		//		return;
+		//	}
+
+		//	// Speichere die ursprüngliche Position
+		//	Ptr<Point3D> originalPosition = text->definition()->position();
+
+		//	// Verschiebe den Text leicht
+		//	Ptr<Point3D> newPosition = Point3D::create(
+		//		originalPosition->x() + 0.1, 
+		//		originalPosition->y(), 
+		//		originalPosition->z()
+		//	);
+		//	text->definition()->position(newPosition);
+
+		//	// Warte kurz
+		//	std::this_thread::sleep_for(std::chrono::milliseconds(300));
+
+		//	// Setze die ursprüngliche Position zurück
+		//	text->definition()->position(originalPosition);
+		//}
+
+		void SketchTextPanel::focusCameraOnText(const Ptr<SketchText>& sketchText) {
+			if (!sketchText) {
+				TRACE("focusCameraOnText: Invalid SketchText");
+				return;
+			}
+
+			Ptr<Point3D> position = nullptr;
+			Ptr<Point3D> minPoint = nullptr;
+			Ptr<Point3D> maxPoint = nullptr;
+
+			if (!toolsApp->sketchTextPanel->getTextPoints(sketchText, position, minPoint, maxPoint)) {
+				TRACE("focusCameraOnText: Failed to get text points");
+				return;
+			}
+			if (!position || !minPoint || !maxPoint) {
+				TRACE("focusCameraOnText: Invalid points");
+				return;
+			}
+
+			// Berechne die Diagonale der BoundingBox
+			double diagonal = sqrt(
+				pow(maxPoint->x() - minPoint->x(), 2) +
+				pow(maxPoint->y() - minPoint->y(), 2) +
+				pow(maxPoint->z() - minPoint->z(), 2)
+			);
+
+			// Verkleinere den Ausschnitt, indem die Diagonale skaliert wird
+			double zoomFactor = 0.5; // Zoom näher an den Text heran
+			double adjustedDiagonal = diagonal * zoomFactor;
+
+			// Erstelle die Kamera
+			Ptr<Camera> camera = Camera::create();
+			if (!camera) {
+				TRACE("focusCameraOnText: Failed to create camera");
+				return;
+			}
+
+			// Setze die Kamera-Position (Auge) und das Ziel (centerPoint)
+			camera->eye(Point3D::create(position->x(), position->y(), position->z() + adjustedDiagonal));
+			camera->target(position);
+
+			// Passe die Ausrichtung der Kamera an (oben und unten vertauschen)
+			camera->upVector(Vector3D::create(-0.5, -1.0, 0.0)); // Y-Achse nach unten
+
+			// Aktiviere weiche Übergänge
+			camera->isSmoothTransition(true);
+
+			// Wende die Kamera auf das aktive Viewport an
+			Ptr<Viewport> viewport = toolsApp->activeViewport();
+			if (!viewport) {
+				TRACE("focusCameraOnText: Failed to get active viewport");
+				return;
+			}
+
+			viewport->camera(camera);
+			viewport->refresh();
+		}
+
+		/// <summary>Adds a highlight graphics.</summary>
+		///
+		/// <param name="sketchText">The sketch text.</param>
+		void SketchTextPanel::addHighlightGraphics(const Ptr<SketchText>& sketchText) {
+			if (!sketchText) {
+				TRACE("addHighlightGraphics: Invalid SketchText");
+				return;
+			}
+
+			Ptr<SketchTextDefinition> textDef = sketchText->definition();
+			Ptr<MultiLineTextDefinition> multiLineTextDef = textDef;
+			if (!multiLineTextDef) {
+				TRACE("addHighlightGraphics: No MultiLineTextDefinition found for the sketch text.");
+				return;
+			}
+
+			std::vector<Ptr<SketchLine>> lines = multiLineTextDef->rectangleLines();
+			if (lines.size() != 4) {
+				TRACE("addHighlightGraphics: rectangleLines does not have the expected number of lines.");
+				return;
+			}
+
+			double minX = (std::numeric_limits<double>::max)();
+			double minY = (std::numeric_limits<double>::max)();
+			double maxX = std::numeric_limits<double>::lowest();
+			double maxY = std::numeric_limits<double>::lowest();
+
+			for (const auto& line : lines) {
+				if (!line) continue;
+
+				Ptr<Point3D> startPoint = line->startSketchPoint()->geometry();
+				Ptr<Point3D> endPoint = line->endSketchPoint()->geometry();
+
+				if (startPoint) {
+					minX = (std::min)(minX, startPoint->x());
+					minY = (std::min)(minY, startPoint->y());
+					maxX = (std::max)(maxX, startPoint->x());
+					maxY = (std::max)(maxY, startPoint->y());
+				}
+
+				if (endPoint) {
+					minX = (std::min)(minX, endPoint->x());
+					minY = (std::min)(minY, endPoint->y());
+					maxX = (std::max)(maxX, endPoint->x());
+					maxY = (std::max)(maxY, endPoint->y());
+				}
+			}
+			if (minX == (std::numeric_limits<double>::max)() || minY == (std::numeric_limits<double>::max)() ||
+				maxX == std::numeric_limits<double>::lowest() || maxY == std::numeric_limits<double>::lowest()) {
+				TRACE("addHighlightGraphics: No valid points found for the bounding box.");
+				return;
+			}
+			double centerX = (minX + maxX) / 2.0;
+			double centerY = (minY + maxY) / 2.0;
+
+#ifdef _TRACE_
+			TRACE("BoundingBox Min: (" + std::to_string(minX) + ", " + std::to_string(minY) + ")");
+			TRACE("BoundingBox Max: (" + std::to_string(maxX) + ", " + std::to_string(maxY) + ")");
+			TRACE("BoundingBox Center: (" + std::to_string(centerX) + ", " + std::to_string(centerY) + ")");
+#endif
+			// Erstelle die CustomGraphicsGroup
+			Ptr<Design> design = toolsApp->activeProduct();
+			Ptr<Component> root = design->rootComponent();
+
+			if (root->customGraphicsGroups()->count() > 0) {
+				for (size_t i = 0; i < root->customGraphicsGroups()->count(); ++i) {
+					Ptr<CustomGraphicsGroup> group = root->customGraphicsGroups()->item(i);
+					if (group) {
+						group->deleteMe();
+					}
+				}
+#ifdef _TRACE_
+				TRACE("Deleted existing graphics.");
+#endif
+				toolsApp->activeViewport()->refresh();
+			}
+
+			Ptr<CustomGraphicsGroup> highlightGraphics = root->customGraphicsGroups()->add();
+			if (!highlightGraphics) {
+				TRACE("addHighlightGraphics: Failed to create CustomGraphicsGroup");
+				return;
+			}
+
+			std::vector<double> points = {
+				minX, minY, 0.0,
+				maxX, minY, 0.0,
+				maxX, maxY, 0.0,
+				minX, maxY, 0.0 
+			};
+
+			std::vector<int> indices = {
+				0, 1, 1, 2, 2, 3, 3, 0
+			};
+
+			Ptr<CustomGraphicsCoordinates> coordinates = CustomGraphicsCoordinates::create(points);
+			if (!coordinates) {
+				TRACE("addHighlightGraphics: Failed to create CustomGraphicsCoordinates");
+				return;
+			}
+
+			Ptr<CustomGraphicsLines> linesGraphics = highlightGraphics->addLines(coordinates, indices, false);
+			if (!linesGraphics) {
+				TRACE("addHighlightGraphics: Failed to add lines");
+				return;
+			}
+
+			linesGraphics->color(Color::create(255, 0, 0, 128));
+			linesGraphics->weight(4.0);
+			linesGraphics->isVisible(true);
+			linesGraphics->isSelectable(false);
+
+			toolsApp->activeViewport()->refresh();
+		}
+
+		//void SketchTextPanel::duplicateAndHighlightText(const Ptr<SketchText>& text) {
+		//	if (!text) {
+		//		TRACE("duplicateAndHighlightText: Invalid SketchText");
+		//		return;
+		//	}
+
+		//	// Erstelle eine Kopie des Textes
+		//	Ptr<SketchTextInput> textInput = text->parentSketch()->sketchTexts()->createInput(
+		//		text->text(), 
+		//		text->height(), 
+		//		text->definition()->position()
+		//	);
+		//	Ptr<SketchText> duplicateText = text->parentSketch()->sketchTexts()->add(textInput);
+
+		//	// Ändere den Stil des Duplikats
+		//	duplicateText->textStyle(TextStyles::BoldTextStyle | TextStyles::UnderlinedTextStyle);
+
+		//	// Warte kurz
+		//	std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+		//	// Entferne das Duplikat
+		//	duplicateText->deleteMe();
+		//}
+
+		/// <summary>
+		/// <para>The getTextPosition method of the SketchTextPanel class retrieves the center position of a sketch text </para>
+		/// <para>by calculating the bounding rectangle defined by its associated lines.</para>
+		/// </summary>
+		///
+		/// <param name="sketchText">
+		/// <para>is a constant reference to a smart pointer that manages an instance of the SketchText class, </para>
+		/// <para>from the Autodesk Fusion 360 API, allowing for safe and efficient access to sketch text objects.</para>
+		/// </param>
+		///
+		/// <returns>The text position.</returns>
+		Ptr<Point3D> SketchTextPanel::getTextPosition(const Ptr<SketchText>& sketchText) {
+			if (!sketchText) {
+				TRACE("getTextPosition: Invalid SketchText");
+				return nullptr;
+			}
+
+			Ptr<SketchTextDefinition> textDef = sketchText->definition();
+			Ptr<MultiLineTextDefinition> multiLineTextDef = textDef;
+			if (!multiLineTextDef) {
+				TRACE("getTextPosition: No MultiLineTextDefinition found for the sketch text.");
+				return nullptr;
+			}
+
+			std::vector<Ptr<SketchLine>> lines = 
+				multiLineTextDef->rectangleLines();
+			if (lines.size() != 4) {
+				TRACE("getTextPosition: rectangleLines does not have the expected number of lines.");
+				return nullptr;
+			}
+			for (size_t i = 0; i < lines.size(); ++i) {
+				Ptr<SketchLine> line = lines[i];
+#ifdef _TRACE_
+				if (line) {
+					TRACE("Line " 
+						+ std::to_string(i) + ": " 
+						+ std::to_string(line->startSketchPoint()->geometry()->x()) + ", " 
+						+ std::to_string(line->startSketchPoint()->geometry()->y()));
+				}
+#endif // TRACE
+			}
+
+			double minX = (std::numeric_limits<double>::max)();
+			double minY = (std::numeric_limits<double>::max)();
+			double maxX = std::numeric_limits<double>::lowest();
+			double maxY = std::numeric_limits<double>::lowest();
+
+			for (const auto& line : lines) {
+				if (!line) continue;
+
+				Ptr<Point3D> startPoint =
+					line->startSketchPoint()->geometry();
+				Ptr<Point3D> endPoint = 
+					line->endSketchPoint()->geometry();
+
+				if (startPoint) {
+					minX = (std::min)(minX, startPoint->x());
+					minY = (std::min)(minY, startPoint->y());
+					maxX = (std::max)(maxX, startPoint->x());
+					maxY = (std::max)(maxY, startPoint->y());
+				}
+
+				if (endPoint) {
+					minX = (std::min)(minX, endPoint->x());
+					minY = (std::min)(minY, endPoint->y());
+					maxX = (std::max)(maxX, endPoint->x());
+					maxY = (std::max)(maxY, endPoint->y());
+				}
+			}
+
+			double centerX = (minX + maxX) / 2.0;
+			double centerY = (minY + maxY) / 2.0;
+#ifdef _TRACE_
+			TRACE("Center Point: (" + std::to_string(centerX) + ", " + std::to_string(centerY) + ")");
+#endif // TRACE
+			Ptr<Point3D> centerPoint = Point3D::create(centerX, centerY, 0.0);
+
+			return centerPoint;
 		}
 	}
 }
 
 //void SketchTextPanelInputChangedEventHandler::notify(const Ptr<InputChangedEventArgs>& eventArgs) {
 //    std::string inputId = eventArgs->input()->id();
-//    Application::log("InputChanged: " + inputId);
+//    TRACE("InputChanged: " + inputId);
 //
 //    Ptr<CommandInputs> inputs = eventArgs->inputs();
 //    if (!inputs) {
-//        Application::log("SketchTextPanelInputChangedEventHandler::notify: Invalid inputs");
+//        TRACE("SketchTextPanelInputChangedEventHandler::notify: Invalid inputs");
 //        return;
 //    }
 //
@@ -570,33 +985,17 @@ namespace implicatex {
 //    }
 //}
 
-//void SketchTextPanel::blinkTextById(size_t id) {
-//    // Suche den Text anhand der ID
-//    Ptr<SketchText> text = findTextById(id);
-//    if (!text) {
-//        Application::log("blinkTextById: Text not found for ID " + std::to_string(id));
-//        return;
-//    }
-//
-//    // Blink-Effekt: Sichtbarkeit des Textes ändern
-//    for (int i = 0; i < 3; ++i) {
-//        text->isVisible(false);
-//        std::this_thread::sleep_for(std::chrono::milliseconds(300)); // 300ms warten
-//        text->isVisible(true);
-//        std::this_thread::sleep_for(std::chrono::milliseconds(300)); // 300ms warten
-//    }
-//}
 
 //Ptr<SketchText> SketchTextPanel::findTextById(size_t id) {
 //    Ptr<Sketch> sketch = toolsApp->sketchTextPanel->sketch_;
 //    if (!sketch) {
-//        Application::log("findTextById: No active sketch");
+//        TRACE("findTextById: No active sketch");
 //        return nullptr;
 //    }
 //
 //    Ptr<SketchTexts> sketchTexts = sketch->sketchTexts();
 //    if (!sketchTexts) {
-//        Application::log("findTextById: No SketchTexts found in the sketch");
+//        TRACE("findTextById: No SketchTexts found in the sketch");
 //        return nullptr;
 //    }
 //

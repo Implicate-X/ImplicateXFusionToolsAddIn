@@ -1,5 +1,4 @@
 #pragma once
-
 constexpr auto IDS_SUBDIR_LOGO = "Resources/logo"; // Resources/logo
 constexpr auto IDS_SUBDIR_FLAGS = "Resources/Flags/"; // Resources/Flags/
 constexpr auto IDS_SUBDIR_SKETCHTEXT = "Resources/Sketch/Text"; // Resources/Sketch/Text

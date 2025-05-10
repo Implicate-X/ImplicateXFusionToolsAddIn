@@ -35,4 +35,14 @@
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
+#ifdef _LOG_FILE_
+#define LOG_TYPE LogTypes::FileLogType
+#else
+#define LOG_TYPE LogTypes::ConsoleLogType
+#endif
+
+#ifndef TRACE
+#define TRACE(msg) toolsApp->log(msg, InfoLogLevel, LOG_TYPE)
+#endif
+
 #include "Symbols.h"
