@@ -20,7 +20,7 @@ namespace implicatex {
                     auto handler = new ToolsCommandCreatedEventHandler();
 
                     if (!implicateXCommandDef->commandCreated()->add(handler)) {
-                        TRACE("Failed to add event handler for ToolsCommandControl");
+                        LOG_ERROR("Failed to add event handler for ToolsCommandControl");
                         return false;
                     }
                 }
@@ -35,7 +35,7 @@ namespace implicatex {
 		/// <para>- The event arguments that contain information about the command creation event.</para>
         /// </param>
         void ToolsCommandCreatedEventHandler::notify(const Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) {
-            TRACE(IDS_CMD_IMPLICATEX_TOOLS);
+            LOG_INFO(IDS_CMD_IMPLICATEX_TOOLS);
         }
     }
 }

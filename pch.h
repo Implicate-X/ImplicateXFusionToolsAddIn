@@ -22,6 +22,7 @@
 #include <exception>
 #include <memory>
 #include <algorithm>
+#include <regex>
 // Ensure ICU library is properly included
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -41,8 +42,18 @@
 #define LOG_TYPE LogTypes::ConsoleLogType
 #endif
 
-#ifndef TRACE
-#define TRACE(msg) toolsApp->log(msg, InfoLogLevel, LOG_TYPE)
+#ifdef _LOG_INFO_
+#define LOG_INFO(msg) toolsApp->log(msg, InfoLogLevel, LOG_TYPE)
+#define LOG_INFO_EX(msg) \
+    toolsApp->log(msg + " | Function: " + __func__ + " | File: " + __FILE__ + " | Line: " + std::to_string(__LINE__), InfoLogLevel, LOG_TYPE)
+#else
+#define LOG_INFO(msg) ((void)0)
+#define LOG_INFO_EX(msg) ((void)0)
+#endif
+
+#ifndef LOG_ERROR
+#define LOG_ERROR(msg) \
+    toolsApp->log(std::string("[ERROR] ") + msg + " | Function: " + __func__ + " | File: " + __FILE__ + " | Line: " + std::to_string(__LINE__), ErrorLogLevel, LOG_TYPE)
 #endif
 
 #include "Symbols.h"

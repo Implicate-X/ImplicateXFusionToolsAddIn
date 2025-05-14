@@ -57,26 +57,26 @@ namespace implicatex {
 					std::string commandDescription = language;
 					auto commandDef = toolsUI->commandDefinitions()->itemById(commandId);
 					if (commandDef) {
-						TRACE("Terminate: CommandDefinition already exists for " + commandId);
+						LOG_INFO_EX("CommandDefinition already exists for " + commandId);
 						if (!commandDef->deleteMe()) {
-							TRACE("Terminate: Failed to delete CommandDefinition for " + commandId);
+							LOG_ERROR("Failed to delete CommandDefinition for " + commandId);
 							continue;
 						}
 					}
 					commandDef = toolsUI->commandDefinitions()->addButtonDefinition(commandId.c_str(), commandName.c_str(), commandDescription.c_str(), IDS_SUBDIR_FLAGS + locale);
 					if (!commandDef) {
-						TRACE("Failed to add CommandDefinition for " + commandId);
+						LOG_ERROR("Failed to add CommandDefinition for " + commandId);
 						continue;
 					}
                     auto handler = new LanguageCommandCreatedEventHandler(locale_);
 					eventHandlers[commandId] = handler;
 					if (!commandDef->commandCreated()->add(handler)) {
-						TRACE("Failed to add event handler for " + commandId);
+						LOG_ERROR("Failed to add event handler for " + commandId);
 						return false;
 					}
 					auto commandControl = this->controls()->addCommand(commandDef, "", false);
 					if (!commandControl) {
-						TRACE("Failed to add CommandControl for " + commandId);
+						LOG_ERROR("Failed to add CommandControl for " + commandId);
 						return false;
 					}
 				}
@@ -104,7 +104,7 @@ namespace implicatex {
 						auto event = commandDef->commandCreated();
 						if (event) {
 							if (!event->remove(eventHandlers[commandId])) {
-								TRACE("Failed to remove event handler for " + commandId);
+								LOG_ERROR("Failed to remove event handler for " + commandId);
 							}
 						}
 						adsk::doEvents();
@@ -113,7 +113,7 @@ namespace implicatex {
 					auto commandControl = this->controls()->itemById(commandId);
 					if (commandControl) {
 						if (!commandControl->deleteMe()) {
-							TRACE("Failed to delete CommandControl for " + commandId);
+							LOG_ERROR("Failed to delete CommandControl for " + commandId);
 						}
 					}
 				}

@@ -21,17 +21,17 @@ namespace implicatex {
 			terminate();
 
 			if (!addToolsCommandControl()) {
-				TRACE("Failed to add Tools CommandControl.");
+				LOG_ERROR("Failed to add Tools CommandControl.");
 				return false;
 			}
 			
 			if (!addSketchTextCommandControl()) {
-				TRACE("Failed to add Sketch Text CommandControl.");
+				LOG_ERROR("Failed to add Sketch Text CommandControl.");
 				return false;
 			}
 
 			if (!addLanguageSelector()) {
-				TRACE("Failed to add Language Selector.");
+				LOG_ERROR("Failed to add Language Selector.");
 				return false;
 			}
 
@@ -64,7 +64,7 @@ namespace implicatex {
 		bool ToolsBarPanel::addToolsCommandControl() {
             Ptr<ToolbarControls> controls = this->controls();
             if (!controls) {
-                TRACE("Failed to retrieve ToolbarControls.");
+                LOG_ERROR("Failed to retrieve ToolbarControls.");
                 return false;
             }
 
@@ -74,18 +74,18 @@ namespace implicatex {
             toolsUI->commandDefinitions()->addButtonDefinition(IDS_CMD_IMPLICATEX_TOOLS, buttonName, buttonName, IDS_SUBDIR_LOGO);
 
             if (!implicateXCommandDef) {
-                TRACE("Failed to add CommandDefinition for Tools.");
+                LOG_ERROR("Failed to add CommandDefinition for Tools.");
                 return false;
             }
 
             Ptr<ToolsCommandControl> implicateXCommandControl = controls->addCommand(implicateXCommandDef, "", false);
             if (!implicateXCommandControl) {
-                TRACE("Failed to add CommandControl for Implicate-X Tools.");
+                LOG_ERROR("Failed to add CommandControl for Implicate-X Tools.");
                 return false;
             }
 
             if (!implicateXCommandControl) {
-                TRACE("Failed to create CommandControl for Implicate-X Tools.");
+                LOG_ERROR("Failed to create CommandControl for Implicate-X Tools.");
                 return false;
             }
 
@@ -105,7 +105,7 @@ namespace implicatex {
 		bool ToolsBarPanel::addSketchTextCommandControl() {
             Ptr<ToolbarControls> controls = this->controls();
             if (!controls) {
-                TRACE("Failed to retrieve ToolbarControls.");
+                LOG_ERROR("Failed to retrieve ToolbarControls.");
                 return false;
             }
 
@@ -115,18 +115,18 @@ namespace implicatex {
             toolsUI->commandDefinitions()->addButtonDefinition(IDS_CMD_SKETCHTEXT, buttonLabel, buttonLabel, IDS_SUBDIR_SKETCHTEXT);
 
             if (!sketchTextCommandDef) {
-                TRACE("Failed to add CommandDefinition for Sketch text definitions.");
+                LOG_ERROR("Failed to add CommandDefinition for Sketch text definitions.");
                 return false;
             }
 
             Ptr<SketchTextCommandControl> sketchTextCommandControl = controls->addCommand(sketchTextCommandDef, "", false);
             if (!sketchTextCommandControl) {
-                TRACE("Failed to add CommandControl for Sketch text definitions.");
+                LOG_ERROR("Failed to add CommandControl for Sketch text definitions.");
                 return false;
             }
 
             if (!sketchTextCommandControl) {
-                TRACE("Failed to create CommandControl for Sketch text definitions.");
+                LOG_ERROR("Failed to create CommandControl for Sketch text definitions.");
                 return false;
             }
 
@@ -182,7 +182,7 @@ namespace implicatex {
         bool ToolsBarPanel::addLanguageSelector() {
             Ptr<ToolbarControls> controls = this->controls();
             if (!controls) {
-                TRACE("Failed to retrieve ToolbarControls.");
+                LOG_ERROR("Failed to retrieve ToolbarControls.");
                 return false;
             }
 
@@ -192,7 +192,7 @@ namespace implicatex {
 				controls->addDropDown(itemText, IDS_SUBDIR_FLAGS + toolsLocaleId, IDS_ID_LANG_SELECTOR);
 
 			if (!languageDropDown) {
-				TRACE("Failed to create DropDownControl.");
+				LOG_ERROR("Failed to create DropDownControl.");
 				return false;
 			}
 
@@ -214,7 +214,7 @@ namespace implicatex {
 			Ptr<CommandDefinition> commandDef = toolsUI->commandDefinitions()->itemById(IDS_CMD_LANG_SELECTOR);
 			if (commandDef) {
 				if (!commandDef->deleteMe()) {
-					TRACE("Failed to delete CommandDefinition for Language Selector.");
+					LOG_ERROR("Failed to delete CommandDefinition for Language Selector.");
 					return false;
 				}
 			}
@@ -225,7 +225,7 @@ namespace implicatex {
 				if (languageDropDown) {
 					languageDropDown->terminate();
 					if (!languageDropDown->deleteMe()) {
-						TRACE("Failed to delete LanguageDropDownControl.");
+						LOG_ERROR("Failed to delete LanguageDropDownControl.");
 						return false;
 					}
 				}
@@ -242,17 +242,17 @@ namespace implicatex {
 		/// <param name="eventArgs">The event arguments.</param>
 		void LanguageCommandCreatedEventHandler::notify(const Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) {
 			std::string message = "Selected language: " + localeId_;
-			TRACE(message);
+			LOG_INFO_EX(message);
 
 			Ptr<Workspace> workspace = toolsUI->workspaces()->itemById(IDS_ID_SOLID_ENV);
 			if (!workspace) {
-				TRACE("Workspace 'FusionSolidEnvironment' not found.");
+				LOG_ERROR("Workspace 'FusionSolidEnvironment' not found.");
 				return;
 			}
 
 			Ptr<ToolbarPanels> panels = workspace->toolbarPanels();
 			if (!panels) {
-				TRACE("Failed to retrieve toolbar panels.");
+				LOG_ERROR("Failed to retrieve toolbar panels.");
 				return;
 			}
 
@@ -262,12 +262,12 @@ namespace implicatex {
                 std::replace(tempLocaleId.begin(), tempLocaleId.end(), '_', '-');
 
 				if (!toolsBarPanel->removeLanguageSelector()) {
-					TRACE("Failed to terminate LanguageDropDownControl.");
+					LOG_ERROR("Failed to terminate LanguageDropDownControl.");
 					return;
 				}
 				toolsLocaleId = tempLocaleId.c_str();
 				if (!toolsBarPanel->addLanguageSelector()) {
-					TRACE("Failed to add LanguageDropDownControl.");
+					LOG_ERROR("Failed to add LanguageDropDownControl.");
 					return;
 				}
 

@@ -20,7 +20,7 @@ namespace fusion {
                     auto handler = new SketchTextCommandCreatedEventHandler();
 
                     if (!sketchTextCommandDef->commandCreated()->add(handler)) {
-                        TRACE("Failed to add event handler for SketchTextCommandControl");
+                        LOG_ERROR("Failed to add event handler for SketchTextCommandControl");
                         return false;
                     }
                 }
@@ -35,7 +35,7 @@ namespace fusion {
 		/// <para>- The event arguments that contain information about the command creation event.</para>
         /// </param>
         void SketchTextCommandCreatedEventHandler::notify(const Ptr<adsk::core::CommandCreatedEventArgs>& eventArgs) {
-            TRACE(IDS_CMD_SKETCHTEXT);
+            LOG_INFO(IDS_CMD_SKETCHTEXT);
             toolsApp->createSketchTextPanel();
         }
     }

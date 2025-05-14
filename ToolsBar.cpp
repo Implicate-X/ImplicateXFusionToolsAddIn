@@ -12,16 +12,16 @@ using namespace adsk::cam;
 namespace implicatex {
 	namespace fusion {
 		bool ToolsBar::initialize() {
-			TRACE("ToolsBar::initialize");
+			LOG_INFO("ToolsBar::initialize");
 			Ptr<Workspace> workspace = toolsUI->workspaces()->itemById(IDS_ID_SOLID_ENV);
 			if (!workspace) {
-				TRACE("Workspace 'FusionSolidEnvironment' not found.");
+				LOG_ERROR("Workspace 'FusionSolidEnvironment' not found.");
 				return false;
 			}
 
 			Ptr<ToolbarPanels> panels = workspace->toolbarPanels();
 			if (!panels) {
-				TRACE("Failed to retrieve toolbar panels.");
+				LOG_ERROR("Failed to retrieve toolbar panels.");
 				return false;
 			}
 
@@ -32,12 +32,12 @@ namespace implicatex {
 
 			toolsBarPanel = panels->add(IDS_ID_TOOLS_BAR, IDS_NAME_TOOLS_BAR, "", false);
 			if (!toolsBarPanel) {
-				TRACE("Failed to create ToolbarPanel.");
+				LOG_ERROR("Failed to create ToolbarPanel.");
 				return false;
 			}
 
 			if (!toolsBarPanel->initialize()) {
-				TRACE("Failed to initialize ToolbarPanel.");
+				LOG_ERROR("Failed to initialize ToolbarPanel.");
 				toolsBarPanel->deleteMe();
 				return false;
 			}
@@ -48,14 +48,14 @@ namespace implicatex {
 		void ToolsBar::terminate() {
 			Ptr<Workspace> workspace = toolsUI->workspaces()->itemById(IDS_ID_SOLID_ENV);
 			if (workspace) {
-				TRACE("ToolsBar::terminate");
+				LOG_INFO("ToolsBar::terminate");
 				Ptr<ToolbarPanels> panels = workspace->toolbarPanels();
 				if (panels) {
 					Ptr<ToolsBarPanel> toolsBarPanel = panels->itemById(IDS_ID_TOOLS_BAR);
 					if (toolsBarPanel) {
 						toolsBarPanel->terminate();
 						toolsBarPanel->deleteMe();
-						TRACE("ImplicateXFusionToolsAddInPanel deleted.");
+						LOG_INFO("ImplicateXFusionToolsAddInPanel deleted.");
 					}
 				}
 			}

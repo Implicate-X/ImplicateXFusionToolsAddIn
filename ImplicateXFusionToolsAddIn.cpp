@@ -33,7 +33,7 @@ namespace implicatex {
             if (!toolsUI)
                 return false;
 
-			TRACE("ToolsBar::initialize");
+			LOG_INFO("ToolsBar::initialize");
 
             if (!toolsApp->initialize())
                 return false;

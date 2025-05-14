@@ -45,11 +45,11 @@ namespace implicatex {
 
            toolsLocaleId = getFusion360LocaleId();  
 
-           TRACE(toolsLocaleId);  
-           TRACE(LoadStringFromResource(IDS_MSG_APP_INITIALIZED)); // Ensure IDS_MSG_APP_INITIALIZED is defined  
+           LOG_INFO(toolsLocaleId);  
+           LOG_INFO(LoadStringFromResource(IDS_MSG_APP_INITIALIZED)); // Ensure IDS_MSG_APP_INITIALIZED is defined  
 
            if (!createBar()) {  
-               TRACE(LoadStringFromResource(IDS_ERR_CREATE_BAR));  
+               LOG_ERROR(LoadStringFromResource(IDS_ERR_CREATE_BAR));  
                return false;  
            }  
 
@@ -71,12 +71,12 @@ namespace implicatex {
 						group->deleteMe();
 					}
 				}
-				TRACE("ToolsApp: Deleted existing graphics.");
+				LOG_INFO("Deleted existing graphics.");
 				toolsApp->activeViewport()->refresh();
 			}
 
 			removeBar();
-			TRACE(LoadStringFromResource(IDS_MSG_APP_TERMINATED));
+			LOG_INFO(LoadStringFromResource(IDS_MSG_APP_TERMINATED));
 		}
 
 		/// <summary>
@@ -218,7 +218,7 @@ namespace implicatex {
 					localeLanguageRegionMap.insert({ locale, languageRegionName });
 				}
 				else {
-					TRACE("Error creating LocaleBuilder: " + std::to_string(status));
+					LOG_ERROR("Error creating LocaleBuilder: " + std::to_string(status));
 				}
 
 				languageRegionName.clear();
