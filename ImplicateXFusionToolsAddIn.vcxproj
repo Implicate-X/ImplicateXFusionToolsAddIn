@@ -107,7 +107,10 @@
     <ClCompile Include="ImplicateXFusionToolsAddIn.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
     </ClCompile>
+    <ClCompile Include="SketchTextPanel.Operation.cpp" />
     <ClCompile Include="SketchTextPanel.cpp" />
+    <ClCompile Include="SketchTextPanel.Design.cpp" />
+    <ClCompile Include="SketchTextPanel.Action.cpp" />
     <ClCompile Include="ToolsCommandControl.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
     </ClCompile>

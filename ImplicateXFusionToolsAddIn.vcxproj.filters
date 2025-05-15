@@ -17,7 +17,7 @@
       <Filter>Tools</Filter>
     </ClCompile>
     <ClCompile Include="SketchTextCommandControl.cpp">
-      <Filter>Sketch</Filter>
+      <Filter>SketchText</Filter>
     </ClCompile>
     <ClCompile Include="LanguageDropDownControl.cpp">
       <Filter>Language</Filter>
@@ -26,10 +26,19 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="SketchTextPanel.cpp">
-      <Filter>Sketch</Filter>
+      <Filter>SketchText</Filter>
     </ClCompile>
     <ClCompile Include="ToolsApp.cpp">
       <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="SketchTextPanel.Design.cpp">
+      <Filter>SketchText</Filter>
+    </ClCompile>
+    <ClCompile Include="SketchTextPanel.Action.cpp">
+      <Filter>SketchText</Filter>
+    </ClCompile>
+    <ClCompile Include="SketchTextPanel.Operation.cpp">
+      <Filter>SketchText</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -52,7 +61,7 @@
       <Filter>Tools</Filter>
     </ClInclude>
     <ClInclude Include="SketchTextCommandControl.h">
-      <Filter>Sketch</Filter>
+      <Filter>SketchText</Filter>
     </ClInclude>
     <ClInclude Include="LanguageDropDownControl.h">
       <Filter>Language</Filter>
@@ -67,7 +76,7 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="SketchTextPanel.h">
-      <Filter>Sketch</Filter>
+      <Filter>SketchText</Filter>
     </ClInclude>
     <ClInclude Include="ToolsApp.h">
       <Filter>App</Filter>
@@ -83,9 +92,6 @@
     <Filter Include="Tools">
       <UniqueIdentifier>{126ec572-ca76-4299-93ea-476e1f197172}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sketch">
-      <UniqueIdentifier>{4d05f090-02ad-4a01-8153-20a174b95845}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Language">
       <UniqueIdentifier>{923fcfae-b575-41bb-8365-23771fdbf74e}</UniqueIdentifier>
     </Filter>
@@ -94,6 +100,9 @@
     </Filter>
     <Filter Include="App">
       <UniqueIdentifier>{ce81f233-83bd-4b50-b972-71765c06aaee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SketchText">
+      <UniqueIdentifier>{4d05f090-02ad-4a01-8153-20a174b95845}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
