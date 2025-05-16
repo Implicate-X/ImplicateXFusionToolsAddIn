@@ -8,21 +8,21 @@ namespace implicatex {
 		#pragma region Constants
 		constexpr auto IDS_CMD_SKETCH_TEXT_DEFINITIONS = "commandSketchTextDefinitions"; // commandSketchTextDefinitions
 		constexpr auto IDS_ITEM_DROPDOWN_SELECT_SKETCH = "dropdownSelectSketch"; // dropdownSelectSketch
-		constexpr auto IDS_ITEM_TAB_TEXTSIZE = "textSizeTab"; // textSizeTab
-		constexpr auto IDS_ITEM_TEXTSIZE_MIN = "textSizeMin"; // textSizeMin
-		constexpr auto IDS_ITEM_TEXTSIZE_MAX = "textSizeMax"; // textSizeMax
-		constexpr auto IDS_ITEM_TEXTSIZE_NEW = "textSizeNew"; // textSizeNew
-		constexpr auto IDS_ITEM_TEXTSIZE_FILTER = "textSizeFilter"; // textSizeFilter
-		constexpr auto IDS_ITEM_TEXTSIZE_MATCH = "textSizeMatch"; // textSizeMatch
-		constexpr auto IDS_ITEM_TEXTSIZE_TABLE = "textSizeTable"; // textSizeTable
-		constexpr auto IDS_ITEM_TEXTSIZE_REPLACE = "textSizeReplace"; // textSizeReplace
-		constexpr auto IDS_ITEM_TEXTSIZE_SEPARATOR = "textSizeSeparator"; // textSizeSeparator
-		constexpr auto IDS_ITEM_TEXTSIZE_MATCH_SEPARATOR = "textSizeMatchSeparator"; // textSizeMatchSeparator
+		constexpr auto IDS_ITEM_TAB_TEXTHEIGHT = "textHeightTab"; // textHeightTab
+		constexpr auto IDS_ITEM_TEXTHEIGHT_MIN = "textHeightMin"; // textHeightMin
+		constexpr auto IDS_ITEM_TEXTHEIGHT_MAX = "textHeightMax"; // textHeightMax
+		constexpr auto IDS_ITEM_TEXTHEIGHT_NEW = "textHeightNew"; // textHeightNew
+		constexpr auto IDS_ITEM_TEXTHEIGHT_FILTER = "textHeightFilter"; // textHeightFilter
+		constexpr auto IDS_ITEM_TEXTHEIGHT_MATCH = "textHeightMatch"; // textHeightMatch
+		constexpr auto IDS_ITEM_TEXTHEIGHT_TABLE = "textHeightTable"; // textHeightTable
+		constexpr auto IDS_ITEM_TEXTHEIGHT_REPLACE = "textHeightReplace"; // textHeightReplace
+		constexpr auto IDS_ITEM_TEXTHEIGHT_SEPARATOR = "textHeightSeparator"; // textHeightSeparator
+		constexpr auto IDS_ITEM_TEXTHEIGHT_MATCH_SEPARATOR = "textHeightMatchSeparator"; // textHeightMatchSeparator
 		constexpr auto IDS_PATH_ICON_SKETCH_TEXT = "Resources/Sketch/Text"; // Resources/Sketch/Text
-		constexpr auto IDS_PATH_ICON_SKETCH_TEXTSIZE = "Resources/Sketch/Text/TextSize"; // Resources/Sketch/Text/TextSize
-		constexpr auto IDS_ACTION_TEXT_ID = "textId"; // textId
-		constexpr auto IDS_ACTION_TEXT_VALUE = "textValue"; // textValue
-		constexpr auto IDS_ACTION_TEXT_HEIGHT = "textHeight"; // textHeight
+		constexpr auto IDS_PATH_ICON_SKETCH_TEXTHEIGHT = "Resources/Sketch/Text/TextSize"; // Resources/Sketch/Text/TextSize
+		constexpr auto IDS_CELL_TEXT_ID = "textIdCell"; // textIdCell
+		constexpr auto IDS_CELL_TEXT_VALUE = "textValueCell"; // textValueCell
+		constexpr auto IDS_CELL_TEXT_HEIGHT = "textHeightCell"; // textHeightCell
 		constexpr auto IDS_UNIT_MM = "mm"; // Millimeters
 		#pragma endregion
 
@@ -48,18 +48,15 @@ namespace implicatex {
 		};
 		#pragma endregion
 
-		/// <summary>
-		/// <para>The SketchTextPanel class is responsible for managing command definitions</para>
-		/// <para>related to sketch text within a user interface,including initializing the palette,</para>
-		/// <para>creating new commands, and removing existing ones.</para>
-		/// </summary>
 		class SketchTextPanel
 		{
 		public:
+			#pragma region Common
 			bool initialize();
 			bool terminate();
 			bool createCommand();
 			bool removeCommand();
+			#pragma endregion
 
 			#pragma region Design
 			bool addTextSizeTab(const Ptr<CommandInputs>& inputs, Ptr<CommandInputs>& tabInputs);
@@ -69,12 +66,12 @@ namespace implicatex {
 			#pragma endregion
 
 			#pragma region Action
-			static void dropDownSelectAction(const Ptr<InputChangedEventArgs>& eventArgs);
-			static void textSizeReplaceAction(const Ptr<InputChangedEventArgs>& eventArgs);
-			static void textSizeChangeAction(const Ptr<InputChangedEventArgs>& eventArgs);
-			static void textIdSelectAction(const Ptr<InputChangedEventArgs>& eventArgs);
-			static void textValueChangeAction(const Ptr<InputChangedEventArgs>& eventArgs);
-			static void textHeightChangeAction(const Ptr<InputChangedEventArgs>& eventArgs);
+			static void dropDownSelected(const Ptr<InputChangedEventArgs>& eventArgs);
+			static void textHeightReplaced(const Ptr<InputChangedEventArgs>& eventArgs);
+			static void textHeightChanged(const Ptr<InputChangedEventArgs>& eventArgs);
+			static void textIdCellSelected(const Ptr<InputChangedEventArgs>& eventArgs);
+			static void textValueCellSelected(const Ptr<InputChangedEventArgs>& eventArgs);
+			static void textHeightCellSelected(const Ptr<InputChangedEventArgs>& eventArgs);
 			#pragma endregion
 
 			#pragma region Operation

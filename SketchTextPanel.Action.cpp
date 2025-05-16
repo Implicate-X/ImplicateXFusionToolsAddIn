@@ -10,7 +10,7 @@
 namespace implicatex {
 	namespace fusion {
 		/// <summary>
-		/// <para>The handleDropDownSelect function processes the selection of a dropdown menu item related to sketches,</para>
+		/// <para>The dropDownSelected function processes the selection of a dropdown menu item related to sketches,</para>
 		/// <para>logging the selected sketch name and aligning the model to the corresponding sketch's XY plane if found.</para>
 		/// </summary>
 		///
@@ -18,8 +18,8 @@ namespace implicatex {
 		/// <para> is a constant reference to a pointer of type InputChangedEventArgs </para>
 		/// <para>which likely encapsulates information about changes to input events in the Autodesk API.</para>
 		/// </param>
-		void SketchTextPanel::dropDownSelectAction(const Ptr<InputChangedEventArgs>& eventArgs) {
-			LOG_INFO("dropDownSelectAction");
+		void SketchTextPanel::dropDownSelected(const Ptr<InputChangedEventArgs>& eventArgs) {
+			LOG_INFO("dropDownSelected");
 			Ptr<DropDownCommandInput> dropdown = eventArgs->input();
 			Ptr<Sketch> sketch = nullptr;
 			if (!toolsApp->sketchTextPanel->getSelectedSketch(dropdown, sketch)) {
@@ -32,15 +32,15 @@ namespace implicatex {
 		/// <summary>Handles the text size replace described by eventArgs.</summary>
 		///
 		/// <param name="eventArgs">The event arguments.</param>
-		void SketchTextPanel::textSizeReplaceAction(const Ptr<InputChangedEventArgs>& eventArgs) {
-			LOG_INFO("textSizeReplaceAction");
+		void SketchTextPanel::textHeightReplaced(const Ptr<InputChangedEventArgs>& eventArgs) {
+			LOG_INFO("textHeightReplaced");
 		}
 
 		/// <summary>Handles the text size change described by eventArgs.</summary>
 		///
 		/// <param name="eventArgs">The event arguments.</param>
-		void SketchTextPanel::textSizeChangeAction(const Ptr<InputChangedEventArgs>& eventArgs) {
-			LOG_INFO("textSizeChangeAction");
+		void SketchTextPanel::textHeightChanged(const Ptr<InputChangedEventArgs>& eventArgs) {
+			LOG_INFO("textHeightChanged");
 
 			Ptr<CommandInputs> inputs = eventArgs->inputs();
 			if (!inputs)
@@ -53,8 +53,8 @@ namespace implicatex {
 			}
 		}
 
-		void SketchTextPanel::textIdSelectAction(const Ptr<InputChangedEventArgs>& eventArgs) {
-			LOG_INFO("textIdSelectAction");
+		void SketchTextPanel::textIdCellSelected(const Ptr<InputChangedEventArgs>& eventArgs) {
+			LOG_INFO("textIdCellSelected");
 
 			Ptr<CommandInputs> inputs = eventArgs->inputs();
 			if (!inputs)
@@ -62,8 +62,8 @@ namespace implicatex {
 
 		}
 
-		void SketchTextPanel::textValueChangeAction(const Ptr<InputChangedEventArgs>& eventArgs) {
-			LOG_INFO("textValueChangeAction");
+		void SketchTextPanel::textValueCellSelected(const Ptr<InputChangedEventArgs>& eventArgs) {
+			LOG_INFO("textValueCellSelected");
 
 			Ptr<CommandInputs> inputs = eventArgs->inputs();
 			if (!inputs)
@@ -71,8 +71,8 @@ namespace implicatex {
 
 		}
 
-		void SketchTextPanel::textHeightChangeAction(const Ptr<InputChangedEventArgs>& eventArgs) {
-			LOG_INFO("textHeightChangeAction");
+		void SketchTextPanel::textHeightCellSelected(const Ptr<InputChangedEventArgs>& eventArgs) {
+			LOG_INFO("textHeightCellSelected");
 
 			Ptr<CommandInputs> inputs = eventArgs->inputs();
 			if (!inputs)
@@ -98,8 +98,9 @@ namespace implicatex {
 
 					LOG_INFO("Text = " + toolsApp->sketchTextPanel->sketchTextMap_[inputId]->text() + " - SketchText = " + sketchText->text());
 
+					toolsApp->sketchTextPanel->getTextPosition(sketchText);
 					//toolsApp->sketchTextPanel->addHighlightGraphics(sketchText);
-					toolsApp->sketchTextPanel->focusCameraOnText(sketchText);
+					//toolsApp->sketchTextPanel->focusCameraOnText(sketchText);
 
 				//for (int i = 0; i < 3; ++i) {
 					//	TextStyles originalStyle = sketchText->textStyle();
@@ -125,9 +126,9 @@ namespace implicatex {
 				return;
 			}
 
-			inputId = std::regex_replace(inputId, std::regex("^TextID_\\d+$"), "textId");
-			inputId = std::regex_replace(inputId, std::regex("^TextValue_\\d+$"), "textValue");
-			inputId = std::regex_replace(inputId, std::regex("^TextHeight_\\d+$"), "textHeight");
+			inputId = std::regex_replace(inputId, std::regex("^TextID_\\d+$"), IDS_CELL_TEXT_ID);
+			inputId = std::regex_replace(inputId, std::regex("^TextValue_\\d+$"), IDS_CELL_TEXT_VALUE);
+			inputId = std::regex_replace(inputId, std::regex("^TextHeight_\\d+$"), IDS_CELL_TEXT_HEIGHT);
 
 			if (toolsApp->sketchTextPanel->actionHandlers_.find(inputId) != 
 				toolsApp->sketchTextPanel->actionHandlers_.end()) {

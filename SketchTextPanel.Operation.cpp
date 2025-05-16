@@ -63,9 +63,9 @@ namespace implicatex {
 		///
 		/// <returns>True if it succeeds, false if it fails.</returns>
 		bool SketchTextPanel::getTextSizeMatch(const Ptr<CommandInputs>& inputs, std::vector<Ptr<SketchText>>& filteredTexts) {
-			Ptr<ValueCommandInput> minTextHeight = inputs->itemById(IDS_ITEM_TEXTSIZE_MIN);
-			Ptr<ValueCommandInput> maxTextHeight = inputs->itemById(IDS_ITEM_TEXTSIZE_MAX);
-			Ptr<TextBoxCommandInput> matchesTextHeightInput = inputs->itemById(IDS_ITEM_TEXTSIZE_MATCH);
+			Ptr<ValueCommandInput> minTextHeight = inputs->itemById(IDS_ITEM_TEXTHEIGHT_MIN);
+			Ptr<ValueCommandInput> maxTextHeight = inputs->itemById(IDS_ITEM_TEXTHEIGHT_MAX);
+			Ptr<TextBoxCommandInput> matchesTextHeightInput = inputs->itemById(IDS_ITEM_TEXTHEIGHT_MATCH);
 			Ptr<DropDownCommandInput> dropdown = inputs->itemById(IDS_ITEM_DROPDOWN_SELECT_SKETCH);
 
 			Ptr<Sketch> sketch = nullptr;
@@ -503,10 +503,10 @@ namespace implicatex {
 			}
 
 			std::vector<double> points = {
-				minX, minY, 0.0,
-				maxX, minY, 0.0,
-				maxX, maxY, 0.0,
-				minX, maxY, 0.0
+				minX, minY, 1.0,
+				maxX, minY, 1.0,
+				maxX, maxY, 1.0,
+				minX, maxY, 1.0
 			};
 
 			std::vector<int> indices = {

@@ -16,11 +16,11 @@ namespace implicatex {
 		///
 		/// <returns>True if it succeeds, false if it fails.</returns>
 		bool SketchTextPanel::addTextSizeTab(const Ptr<CommandInputs>& inputs, Ptr<CommandInputs>& tabInputs) {
-			Ptr<TabCommandInput> textSizeTab = 
-				inputs->addTabCommandInput(IDS_ITEM_TAB_TEXTSIZE, 
-					LoadStringFromResource(IDS_LABEL_TAB_TEXTSIZE), IDS_PATH_ICON_SKETCH_TEXTSIZE);
+			Ptr<TabCommandInput> textHeightTab = 
+				inputs->addTabCommandInput(IDS_ITEM_TAB_TEXTHEIGHT, 
+					LoadStringFromResource(IDS_LABEL_TAB_TEXTHEIGHT), IDS_PATH_ICON_SKETCH_TEXTHEIGHT);
 
-			tabInputs = textSizeTab->children();
+			tabInputs = textHeightTab->children();
 			if (!tabInputs) {
 				LOG_ERROR("Failed to add tab command input");
 				return false;
@@ -59,8 +59,8 @@ namespace implicatex {
 		/// <returns>True if it succeeds, false if it fails.</returns>
 		bool SketchTextPanel::addTextSizeFilter(const Ptr<CommandInputs>& inputs) {
 			Ptr<TextBoxCommandInput> textInput = 
-				inputs->addTextBoxCommandInput(IDS_ITEM_TEXTSIZE_FILTER, "",
-					LoadStringFromResource(IDS_LABEL_FILTER_TEXTSIZE_RANGE), 1, true);
+				inputs->addTextBoxCommandInput(IDS_ITEM_TEXTHEIGHT_FILTER, "",
+					LoadStringFromResource(IDS_LABEL_FILTER_TEXTHEIGHT_RANGE), 1, true);
 			if (!textInput) {
 				LOG_ERROR("Failed to add text box command input");
 				return false;
@@ -69,15 +69,15 @@ namespace implicatex {
 			Ptr<ValueInput> maxTextHeightInput = ValueInput::createByReal(1.0);
 
 			Ptr<ValueCommandInput> minTextHeight = 
-				inputs->addValueInput(IDS_ITEM_TEXTSIZE_MIN, 
-					LoadStringFromResource(IDS_LABEL_TEXTSIZE_MIN), IDS_UNIT_MM, minTextHeightInput);
+				inputs->addValueInput(IDS_ITEM_TEXTHEIGHT_MIN, 
+					LoadStringFromResource(IDS_LABEL_TEXTHEIGHT_MIN), IDS_UNIT_MM, minTextHeightInput);
 			if (!minTextHeight) {
 				LOG_ERROR("Failed to add min text height command input");
 				return false;
 			}
 			Ptr<ValueCommandInput> maxTextHeight = 
-				inputs->addValueInput(IDS_ITEM_TEXTSIZE_MAX, 
-					LoadStringFromResource(IDS_LABEL_TEXTSIZE_MAX), IDS_UNIT_MM, maxTextHeightInput);
+				inputs->addValueInput(IDS_ITEM_TEXTHEIGHT_MAX, 
+					LoadStringFromResource(IDS_LABEL_TEXTHEIGHT_MAX), IDS_UNIT_MM, maxTextHeightInput);
 			if (!maxTextHeight) {
 				LOG_ERROR("Failed to add max text height command input");
 				return false;
@@ -91,10 +91,10 @@ namespace implicatex {
 		///
 		/// <returns>True if it succeeds, false if it fails.</returns>
 		bool SketchTextPanel::addTextSizeMatch(const Ptr<CommandInputs>& inputs) {
-			Ptr<TextBoxCommandInput> textSizeMatch = 
-				inputs->addTextBoxCommandInput(IDS_ITEM_TEXTSIZE_MATCH, 
-					LoadStringFromResource(IDS_LABEL_TEXTSIZE_MATCH), "", 1, true);
-			if (!textSizeMatch) {
+			Ptr<TextBoxCommandInput> textHeightMatch = 
+				inputs->addTextBoxCommandInput(IDS_ITEM_TEXTHEIGHT_MATCH, 
+					LoadStringFromResource(IDS_LABEL_TEXTHEIGHT_MATCH), "", 1, true);
+			if (!textHeightMatch) {
 				LOG_ERROR("Failed to add text size match command input");
 				return false;
 			}
@@ -104,8 +104,8 @@ namespace implicatex {
 				return false;
 			}
 			Ptr<TableCommandInput> tableInput = 
-				inputs->addTableCommandInput( IDS_ITEM_TEXTSIZE_TABLE, 
-				LoadStringFromResource(IDS_LABEL_TEXTSIZE_TABLE), 
+				inputs->addTableCommandInput( IDS_ITEM_TEXTHEIGHT_TABLE, 
+				LoadStringFromResource(IDS_LABEL_TEXTHEIGHT_TABLE), 
 				3, // Anzahl der Spalten
 				"1:3:1" // Spaltenverhältnis: ID, Text, Höhe
 			);
@@ -173,43 +173,43 @@ namespace implicatex {
 				return;
 			}
 
-			Ptr<CommandInputs> textSizeTabInputs = nullptr;
-			if (!toolsApp->sketchTextPanel->addTextSizeTab(inputs, textSizeTabInputs)) {
+			Ptr<CommandInputs> textHeightTabInputs = nullptr;
+			if (!toolsApp->sketchTextPanel->addTextSizeTab(inputs, textHeightTabInputs)) {
 				LOG_ERROR("Failed to add tab command input");
 				return;
 			}
 
 			Ptr<DropDownCommandInput> dropdown = nullptr;
-			if (!toolsApp->sketchTextPanel->addSketchDropDown(textSizeTabInputs, dropdown)) {
+			if (!toolsApp->sketchTextPanel->addSketchDropDown(textHeightTabInputs, dropdown)) {
 				LOG_ERROR("Failed to add dropdown command input");
 				return;
 			}
 
-			textSizeTabInputs->addSeparatorCommandInput(IDS_ITEM_TEXTSIZE_SEPARATOR);
+			textHeightTabInputs->addSeparatorCommandInput(IDS_ITEM_TEXTHEIGHT_SEPARATOR);
 
-			if (!toolsApp->sketchTextPanel->addTextSizeFilter(textSizeTabInputs)) {
+			if (!toolsApp->sketchTextPanel->addTextSizeFilter(textHeightTabInputs)) {
 				LOG_ERROR("Failed to add text size filter");
 				return;
 			}
 
-			textSizeTabInputs->addSeparatorCommandInput(IDS_ITEM_TEXTSIZE_MATCH_SEPARATOR);
+			textHeightTabInputs->addSeparatorCommandInput(IDS_ITEM_TEXTHEIGHT_MATCH_SEPARATOR);
 
-			if (!toolsApp->sketchTextPanel->addTextSizeMatch(textSizeTabInputs)) {
+			if (!toolsApp->sketchTextPanel->addTextSizeMatch(textHeightTabInputs)) {
 				LOG_ERROR("Failed to add text size match");
 				return;
 			}
 
-			textSizeTabInputs->addSeparatorCommandInput(IDS_ITEM_TEXTSIZE_MATCH_SEPARATOR);
+			textHeightTabInputs->addSeparatorCommandInput(IDS_ITEM_TEXTHEIGHT_MATCH_SEPARATOR);
 
 			Ptr<ValueInput> newTextHeightInput = ValueInput::createByReal(1.0);
 			Ptr<ValueCommandInput> newTextHeightCmdInput = 
-				textSizeTabInputs->addValueInput(IDS_ITEM_TEXTSIZE_NEW, 
-					LoadStringFromResource(IDS_LABEL_TEXTSIZE_NEW), IDS_UNIT_MM, newTextHeightInput);
+				textHeightTabInputs->addValueInput(IDS_ITEM_TEXTHEIGHT_NEW, 
+					LoadStringFromResource(IDS_LABEL_TEXTHEIGHT_NEW), IDS_UNIT_MM, newTextHeightInput);
 
-			std::string buttonLabel = LoadStringFromResource(IDS_LABEL_TEXTSIZE_REPLACE);
+			std::string buttonLabel = LoadStringFromResource(IDS_LABEL_TEXTHEIGHT_REPLACE);
 
 			Ptr<BoolValueCommandInput> replaceButton = 
-				textSizeTabInputs->addBoolValueInput(IDS_ITEM_TEXTSIZE_REPLACE, buttonLabel, false);
+				textHeightTabInputs->addBoolValueInput(IDS_ITEM_TEXTHEIGHT_REPLACE, buttonLabel, false);
 
 			if (!replaceButton) {
 				LOG_ERROR("Failed to add Replace button");
@@ -218,7 +218,7 @@ namespace implicatex {
 
 			replaceButton->tooltip(buttonLabel);
 			replaceButton->text(" " + buttonLabel);
-			replaceButton->resourceFolder(IDS_PATH_ICON_SKETCH_TEXTSIZE);
+			replaceButton->resourceFolder(IDS_PATH_ICON_SKETCH_TEXTHEIGHT);
 
 			command->inputChanged()->add(new SketchTextPanelInputChangedEventHandler());
 
