@@ -98,9 +98,8 @@ namespace implicatex {
 
 					LOG_INFO("Text = " + toolsApp->sketchTextPanel->sketchTextMap_[inputId]->text() + " - SketchText = " + sketchText->text());
 
-					toolsApp->sketchTextPanel->getTextPosition(sketchText);
-					//toolsApp->sketchTextPanel->addHighlightGraphics(sketchText);
-					//toolsApp->sketchTextPanel->focusCameraOnText(sketchText);
+					toolsApp->sketchTextPanel->addHighlightGraphics(sketchText);
+					toolsApp->sketchTextPanel->focusCameraOnText(sketchText);
 
 				//for (int i = 0; i < 3; ++i) {
 					//	TextStyles originalStyle = sketchText->textStyle();

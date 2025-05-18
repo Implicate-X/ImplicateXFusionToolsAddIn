@@ -154,7 +154,12 @@ namespace implicatex {
 				Ptr<SketchLine> line = lines[i];
 
 				if (line) {
-					LOG_INFO("Line "
+					LOG_INFO("Line World = "
+						+ std::to_string(i) + ": "
+						+ std::to_string(line->startSketchPoint()->worldGeometry()->x()) + ", "
+						+ std::to_string(line->startSketchPoint()->worldGeometry()->y()) + ", "
+						+ std::to_string(line->startSketchPoint()->worldGeometry()->z()));
+					LOG_INFO("Line Sketch = "
 						+ std::to_string(i) + ": "
 						+ std::to_string(line->startSketchPoint()->geometry()->x()) + ", "
 						+ std::to_string(line->startSketchPoint()->geometry()->y()));
@@ -170,9 +175,9 @@ namespace implicatex {
 				if (!line) continue;
 
 				Ptr<Point3D> startPoint =
-					line->startSketchPoint()->geometry();
+					line->startSketchPoint()->worldGeometry();
 				Ptr<Point3D> endPoint =
-					line->endSketchPoint()->geometry();
+					line->endSketchPoint()->worldGeometry();
 
 				if (startPoint) {
 					minX = (std::min)(minX, startPoint->x());
@@ -234,11 +239,14 @@ namespace implicatex {
 			double maxX = (std::numeric_limits<double>::lowest)();
 			double maxY = (std::numeric_limits<double>::lowest)();
 
+			Ptr<Point3D> startPoint = nullptr;
+			Ptr<Point3D> endPoint = nullptr;
+
 			for (const auto& line : lines) {
 				if (!line) continue;
 
-				Ptr<Point3D> startPoint = line->startSketchPoint()->geometry();
-				Ptr<Point3D> endPoint = line->endSketchPoint()->geometry();
+				Ptr<Point3D> startPoint = line->startSketchPoint()->worldGeometry();
+				Ptr<Point3D> endPoint = line->endSketchPoint()->worldGeometry();
 
 				if (startPoint) {
 					minX = (std::min)(minX, startPoint->x());
@@ -261,10 +269,15 @@ namespace implicatex {
 			}
 			double centerX = (minX + maxX) / 2.0;
 			double centerY = (minY + maxY) / 2.0;
+			double centerZ = 0.0;
+			
+			if (startPoint) {
+				centerZ = startPoint->z();
+			}
 
-			minPoint = Point3D::create(minX, minY, 0.0);
-			maxPoint = Point3D::create(maxX, maxY, 0.0);
-			centerPoint = Point3D::create(centerX, centerY, 0.0);
+			minPoint = Point3D::create(minX, minY, centerZ);
+			maxPoint = Point3D::create(maxX, maxY, centerZ);
+			centerPoint = Point3D::create(centerX, centerY, centerZ);
 
 			return true;
 		}
@@ -396,20 +409,7 @@ namespace implicatex {
 				pow(maxPoint->z() - minPoint->z(), 2)
 			);
 
-			double zoomFactor = 0.5; // Zoom closer to the text
-			double adjustedDiagonal = diagonal * zoomFactor;
-
-			Ptr<Camera> camera = Camera::create();
-			if (!camera) {
-				LOG_ERROR("Failed to create camera");
-				return;
-			}
-
-			// Set the camera position (eye) and the target (centerPoint)
-			camera->eye(Point3D::create(position->x(), position->y(), position->z() + adjustedDiagonal));
-			camera->target(position);
-			camera->upVector(Vector3D::create(0.0, 1.0, 0.0));
-			camera->isSmoothTransition(true);
+			double zoomFactor = 1.0; // Zoom closer to the text
 
 			Ptr<Viewport> viewport = toolsApp->activeViewport();
 			if (!viewport) {
@@ -417,7 +417,39 @@ namespace implicatex {
 				return;
 			}
 
-			viewport->camera(camera);
+			Ptr<Camera> viewportCamera = viewport->camera();
+			CameraTypes viewportCameraType = viewportCamera->cameraType();
+
+			Ptr<Camera> sketchTextCamera = Camera::create();
+			if (!sketchTextCamera) {
+				LOG_ERROR("Failed to create camera");
+				return;
+			}
+
+			switch (viewportCameraType)
+			{
+			case CameraTypes::OrthographicCameraType:
+				sketchTextCamera->cameraType(CameraTypes::OrthographicCameraType);
+				sketchTextCamera->eye(Point3D::create(position->x(), position->y(), position->z() + 1.0));
+				sketchTextCamera->setExtents(diagonal * zoomFactor, diagonal * zoomFactor);
+				break;
+
+			case CameraTypes::PerspectiveCameraType:
+				sketchTextCamera->cameraType(CameraTypes::PerspectiveCameraType);
+
+			case CameraTypes::PerspectiveWithOrthoFacesCameraType:
+				sketchTextCamera->cameraType(CameraTypes::PerspectiveWithOrthoFacesCameraType);
+				sketchTextCamera->eye(Point3D::create(position->x(), position->y(), position->z() + diagonal * 1.0));
+				sketchTextCamera->perspectiveAngle(0.5 * zoomFactor);
+				break;
+			}
+			
+			// Set the camera position (eye) and the target (centerPoint)
+			sketchTextCamera->target(position);
+			sketchTextCamera->upVector(Vector3D::create(0.0, 1.0, 0.0));
+			sketchTextCamera->isSmoothTransition(true);
+
+			viewport->camera(sketchTextCamera);
 		}
 
 		/// <summary>
@@ -450,11 +482,14 @@ namespace implicatex {
 			double maxX = std::numeric_limits<double>::lowest();
 			double maxY = std::numeric_limits<double>::lowest();
 
+			Ptr<Point3D> startPoint;
+			Ptr<Point3D> endPoint;
+
 			for (const auto& line : lines) {
 				if (!line) continue;
 
-				Ptr<Point3D> startPoint = line->startSketchPoint()->geometry();
-				Ptr<Point3D> endPoint = line->endSketchPoint()->geometry();
+				startPoint = line->startSketchPoint()->worldGeometry();
+				endPoint = line->endSketchPoint()->worldGeometry();
 
 				if (startPoint) {
 					minX = (std::min)(minX, startPoint->x());
@@ -477,6 +512,11 @@ namespace implicatex {
 			}
 			double centerX = (minX + maxX) / 2.0;
 			double centerY = (minY + maxY) / 2.0;
+			double centerZ = 0.0;
+			
+			if (startPoint) {
+				centerZ = startPoint->z();
+			}
 
 			LOG_INFO("BoundingBox Min: (" + std::to_string(minX) + ", " + std::to_string(minY) + ")");
 			LOG_INFO("BoundingBox Max: (" + std::to_string(maxX) + ", " + std::to_string(maxY) + ")");
@@ -503,10 +543,10 @@ namespace implicatex {
 			}
 
 			std::vector<double> points = {
-				minX, minY, 1.0,
-				maxX, minY, 1.0,
-				maxX, maxY, 1.0,
-				minX, maxY, 1.0
+				minX, minY, centerZ,
+				maxX, minY, centerZ,
+				maxX, maxY, centerZ,
+				minX, maxY, centerZ
 			};
 
 			std::vector<int> indices = {
@@ -525,10 +565,12 @@ namespace implicatex {
 				return;
 			}
 
-			linesGraphics->color(Color::create(255, 0, 0, 128));
-			linesGraphics->weight(4.0);
+			auto colorEffect = CustomGraphicsSolidColorEffect::create(Color::create(0x00, 0xFF, 0xFF, 0xFF));
+			linesGraphics->color(colorEffect);
+			linesGraphics->weight(1.5);
 			linesGraphics->isVisible(true);
-			linesGraphics->isSelectable(false);
+			linesGraphics->isSelectable(true);
+			linesGraphics->setOpacity(1.0, true);
 
 			toolsApp->activeViewport()->refresh();
 		}
