@@ -5,6 +5,7 @@
 #include "ToolsApp.h"
 #include "ImplicateXFusionToolsAddIn.h"
 #include "SketchTextCommandControl.h"
+#include "SketchTextHeightTab.h"
 #include "SketchTextPanel.h"
 
 namespace implicatex {
@@ -48,75 +49,6 @@ namespace implicatex {
 				return false;
 			}
 
-			return true;
-		}
-
-		/// <summary>
-		/// <para>getTextSizeMatch retrieves and filters sketch texts based on specified minimum and maximum height,</para>
-		/// <para>updating a command input with the count of matching texts.</para>
-		/// </summary>
-		///
-		/// <param name="inputs">
-		/// <para>is a constant reference to a smart pointer of type adsk::core::CommandInputs, </para>
-		/// <para>which is typically used to manage command input parameters in the Autodesk Fusion 360 API.</para>
-		/// </param>
-		///
-		/// <returns>True if it succeeds, false if it fails.</returns>
-		bool SketchTextPanel::getTextSizeMatch(const Ptr<CommandInputs>& inputs, std::vector<Ptr<SketchText>>& filteredTexts) {
-			Ptr<ValueCommandInput> minTextHeight = inputs->itemById(IDS_ITEM_TEXTHEIGHT_MIN);
-			Ptr<ValueCommandInput> maxTextHeight = inputs->itemById(IDS_ITEM_TEXTHEIGHT_MAX);
-			Ptr<TextBoxCommandInput> matchesTextHeightInput = inputs->itemById(IDS_ITEM_TEXTHEIGHT_MATCH);
-			Ptr<DropDownCommandInput> dropdown = inputs->itemById(IDS_ITEM_DROPDOWN_SELECT_SKETCH);
-
-			Ptr<Sketch> sketch = nullptr;
-			if (!toolsApp->sketchTextPanel->getSelectedSketch(dropdown, sketch)) {
-				LOG_ERROR("Failed to get selected sketch");
-				return false;
-			}
-
-			double minHeightValue = minTextHeight->value();
-			double maxHeightValue = maxTextHeight->value();
-
-			Ptr<SketchTexts> sketchTexts = sketch->sketchTexts();
-			if (!sketchTexts) {
-				LOG_ERROR("No SketchTexts found in the sketch.");
-				return false;
-			}
-
-			for (size_t i = 0; i < sketchTexts->count(); ++i) {
-				Ptr<SketchText> text = sketchTexts->item(i);
-				Ptr<Point3D> minPoint = text->boundingBox()->minPoint();
-				Ptr<Point3D> maxPoint = text->boundingBox()->maxPoint();
-				if (!minPoint || !maxPoint) {
-					LOG_ERROR("Failed to get bounding box points");
-					return false;
-				}
-
-				Ptr<Point3D> center = Point3D::create(
-					(minPoint->x() + maxPoint->x()) / 2.0,
-					(minPoint->y() + maxPoint->y()) / 2.0,
-					(minPoint->z() + maxPoint->z()) / 2.0
-				);
-
-				LOG_INFO("Min: " + std::to_string(minPoint->x()) + ", " + std::to_string(minPoint->y()) + ", " + std::to_string(minPoint->z()));
-				LOG_INFO("Max: " + std::to_string(maxPoint->x()) + ", " + std::to_string(maxPoint->y()) + ", " + std::to_string(maxPoint->z()));
-				LOG_INFO("Center: " + std::to_string(center->x()) + ", " + std::to_string(center->y()) + ", " + std::to_string(center->z()));
-
-				if (text) {
-					double textHeight = text->height();
-					if (textHeight >= minHeightValue && textHeight <= maxHeightValue) {
-						filteredTexts.push_back(text);
-					}
-				}
-			}
-
-			size_t textHeightMatchCount = filteredTexts.size();
-
-			matchesTextHeightInput->text(std::to_string(textHeightMatchCount));
-
-			//for (const auto& text : filteredTexts) {
-			//	TRACE("Filtered Text: " + text->text());
-			//}
 			return true;
 		}
 
@@ -394,11 +326,11 @@ namespace implicatex {
 			Ptr<Point3D> maxPoint = nullptr;
 
 			if (!toolsApp->sketchTextPanel->getTextPoints(sketchText, position, minPoint, maxPoint)) {
-				LOG_ERROR("focusCameraOnText: Failed to get text points");
+				LOG_ERROR("Failed to get text points");
 				return;
 			}
 			if (!position || !minPoint || !maxPoint) {
-				LOG_ERROR("focusCameraOnText: Invalid points");
+				LOG_ERROR("Invalid points");
 				return;
 			}
 
@@ -413,7 +345,7 @@ namespace implicatex {
 
 			Ptr<Viewport> viewport = toolsApp->activeViewport();
 			if (!viewport) {
-				LOG_ERROR("focusCameraOnText: Failed to get active viewport");
+				LOG_ERROR("Failed to get active viewport");
 				return;
 			}
 
@@ -440,7 +372,7 @@ namespace implicatex {
 			case CameraTypes::PerspectiveWithOrthoFacesCameraType:
 				sketchTextCamera->cameraType(CameraTypes::PerspectiveWithOrthoFacesCameraType);
 				sketchTextCamera->eye(Point3D::create(position->x(), position->y(), position->z() + diagonal * 1.0));
-				sketchTextCamera->perspectiveAngle(0.5 * zoomFactor);
+				sketchTextCamera->perspectiveAngle(zoomFactor);
 				break;
 			}
 			

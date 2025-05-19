@@ -5,6 +5,7 @@
 #include "ToolsApp.h"
 #include "ImplicateXFusionToolsAddIn.h"
 #include "SketchTextCommandControl.h"
+#include "SketchTextHeightTab.h"
 #include "SketchTextPanel.h"
 
 namespace implicatex {
@@ -16,13 +17,6 @@ namespace implicatex {
 		///
 		/// <returns>True if it succeeds, false if it fails.</returns>
         bool SketchTextPanel::initialize() {  
-			actionHandlers_.insert({ std::string(IDS_ITEM_DROPDOWN_SELECT_SKETCH), &SketchTextPanel::dropDownSelected});
-			actionHandlers_.insert({ std::string(IDS_ITEM_TEXTHEIGHT_REPLACE), &SketchTextPanel::textHeightReplaced});
-			actionHandlers_.insert({ std::string(IDS_ITEM_TEXTHEIGHT_MIN), &SketchTextPanel::textHeightChanged });
-			actionHandlers_.insert({ std::string(IDS_ITEM_TEXTHEIGHT_MAX), &SketchTextPanel::textHeightChanged });
-			actionHandlers_.insert({ std::string(IDS_CELL_TEXT_ID), &SketchTextPanel::textIdCellSelected });
-			actionHandlers_.insert({ std::string(IDS_CELL_TEXT_VALUE), &SketchTextPanel::textValueCellSelected });
-			actionHandlers_.insert({ std::string(IDS_CELL_TEXT_HEIGHT), &SketchTextPanel::textHeightCellSelected });
            return createCommand();  
         }
 
@@ -33,6 +27,10 @@ namespace implicatex {
 		///
 		/// <returns>True if it succeeds, false if it fails.</returns>
 		bool SketchTextPanel::terminate() {
+			if (textHeightTab_) {
+				textHeightTab_.reset();
+				textHeightTab_ = nullptr;
+			}
 			return removeCommand();
 		}
 

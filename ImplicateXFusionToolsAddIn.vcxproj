@@ -107,10 +107,12 @@
     <ClCompile Include="ImplicateXFusionToolsAddIn.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
     </ClCompile>
+    <ClCompile Include="SketchTextHeightTab.cpp" />
     <ClCompile Include="SketchTextPanel.Operation.cpp" />
     <ClCompile Include="SketchTextPanel.cpp" />
     <ClCompile Include="SketchTextPanel.Design.cpp" />
-    <ClCompile Include="SketchTextPanel.Action.cpp" />
+    <ClCompile Include="SketchTextHeightTab.Action.cpp" />
+    <ClCompile Include="SketchTextSettingsTab.cpp" />
     <ClCompile Include="ToolsCommandControl.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
     </ClCompile>
@@ -144,7 +146,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImplicateXFusionToolsAddIn.h" />
+    <ClInclude Include="SketchTextHeightTab.h" />
     <ClInclude Include="SketchTextPanel.h" />
+    <ClInclude Include="SketchTextSettingsTab.h" />
     <ClInclude Include="Symbols.h" />
     <ClInclude Include="ToolsCommandControl.h" />
     <ClInclude Include="LanguageDropDownControl.h" />

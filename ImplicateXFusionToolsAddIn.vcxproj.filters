@@ -34,10 +34,16 @@
     <ClCompile Include="SketchTextPanel.Design.cpp">
       <Filter>SketchText</Filter>
     </ClCompile>
-    <ClCompile Include="SketchTextPanel.Action.cpp">
+    <ClCompile Include="SketchTextHeightTab.Action.cpp">
       <Filter>SketchText</Filter>
     </ClCompile>
     <ClCompile Include="SketchTextPanel.Operation.cpp">
+      <Filter>SketchText</Filter>
+    </ClCompile>
+    <ClCompile Include="SketchTextSettingsTab.cpp">
+      <Filter>Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="SketchTextHeightTab.cpp">
       <Filter>SketchText</Filter>
     </ClCompile>
   </ItemGroup>
@@ -81,6 +87,12 @@
     <ClInclude Include="ToolsApp.h">
       <Filter>App</Filter>
     </ClInclude>
+    <ClInclude Include="SketchTextSettingsTab.h">
+      <Filter>Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="SketchTextHeightTab.h">
+      <Filter>SketchText</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resources">
@@ -103,6 +115,9 @@
     </Filter>
     <Filter Include="SketchText">
       <UniqueIdentifier>{4d05f090-02ad-4a01-8153-20a174b95845}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Settings">
+      <UniqueIdentifier>{ce0afde5-194f-4cb7-8373-c9fdd49c7349}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

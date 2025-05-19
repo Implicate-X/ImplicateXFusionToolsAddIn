@@ -4,6 +4,8 @@
 #include "ToolsBar.h"
 #include "ToolsApp.h"  
 #include "ImplicateXFusionToolsAddIn.h"
+#include "SketchTextSettingsTab.h"
+#include "SketchTextHeightTab.h"
 #include "SketchTextPanel.h"
 
 using namespace adsk::core;
