@@ -5,6 +5,7 @@
 #include "ToolsApp.h"
 #include "ImplicateXFusionToolsAddIn.h"
 #include "SketchTextCommandControl.h"
+#include "SketchTextSettingsTab.h"
 #include "SketchTextHeightTab.h"
 #include "SketchTextPanel.h"
 
@@ -27,6 +28,11 @@ namespace implicatex {
 		///
 		/// <returns>True if it succeeds, false if it fails.</returns>
 		bool SketchTextPanel::terminate() {
+			if (settingsTab_) {
+				settingsTab_.reset();
+				settingsTab_ = nullptr;
+			}
+
 			if (textHeightTab_) {
 				textHeightTab_.reset();
 				textHeightTab_ = nullptr;

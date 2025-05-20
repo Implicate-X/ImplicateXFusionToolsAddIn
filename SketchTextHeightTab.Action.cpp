@@ -5,6 +5,7 @@
 #include "ToolsApp.h"
 #include "ImplicateXFusionToolsAddIn.h"
 #include "SketchTextCommandControl.h"
+#include "SketchTextSettingsTab.h"
 #include "SketchTextHeightTab.h"
 #include "SketchTextPanel.h"
 
@@ -59,11 +60,18 @@ namespace implicatex {
 				return;
 			}
 
-			auto heightTab = toolsApp->sketchTextPanel->textHeightTab_;
+			std::weak_ptr<SketchTextHeightTab> heightTabTemp = toolsApp->sketchTextPanel->textHeightTab_;
+			auto heightTab = heightTabTemp.lock();
+			if (!heightTab) {
+				LOG_ERROR("Failed to get height tab");
+				return;
+			}
 
 			std::vector<Ptr<SketchText>> filteredTexts;
-			if (!heightTab->getTextHeightMatch(inputs, filteredTexts)) {
-				LOG_ERROR("Failed to get text size match");
+			bool isSucceeded = heightTab->getTextHeightMatch(inputs, filteredTexts);
+			heightTab.reset();
+			if (!isSucceeded) {
+				LOG_ERROR("Failed to get text height match");
 				return;
 			}
 		}

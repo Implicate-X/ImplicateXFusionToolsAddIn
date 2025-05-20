@@ -61,7 +61,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SIMPLE_EXPORTS;_LOG_INFO_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../API/Fusion360/CPP/include;../../../API/ICU/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../API/Fusion360/CPP/include;../../../API/ICU/include;../../../API/JSON/include</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp23</LanguageStandard>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>

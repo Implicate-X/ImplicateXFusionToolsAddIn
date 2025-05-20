@@ -5,6 +5,7 @@
 #include "ToolsApp.h"
 #include "ImplicateXFusionToolsAddIn.h"
 #include "SketchTextCommandControl.h"
+#include "SketchTextSettingsTab.h"
 #include "SketchTextHeightTab.h"
 #include "SketchTextPanel.h"
 

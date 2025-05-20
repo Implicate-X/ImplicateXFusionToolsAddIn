@@ -36,6 +36,7 @@
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
+#include <nlohmann/json.hpp>
 #ifdef _LOG_FILE_
 #define LOG_TYPE LogTypes::FileLogType
 #else

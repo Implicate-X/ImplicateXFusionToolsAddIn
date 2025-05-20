@@ -51,7 +51,7 @@ namespace implicatex {
 
 			#pragma region Design
 			bool addTextHeightTab(const Ptr<Command>& command);
-			bool addSettingsTab(const Ptr<CommandInputs>& inputs, Ptr<CommandInputs>& tabInputs);
+			bool addSettingsTab(const Ptr<Command>& command);
 			#pragma endregion
 
 			#pragma region Operation
@@ -63,6 +63,7 @@ namespace implicatex {
 			void focusCameraOnText(const Ptr<SketchText>& sketchText);
 			#pragma endregion
 
+			std::shared_ptr<SketchTextSettingsTab> settingsTab_;
 			std::shared_ptr<SketchTextHeightTab> textHeightTab_;
 		};
 	}

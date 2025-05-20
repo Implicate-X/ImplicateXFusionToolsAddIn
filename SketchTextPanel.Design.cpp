@@ -5,9 +5,9 @@
 #include "ToolsApp.h"
 #include "ImplicateXFusionToolsAddIn.h"
 #include "SketchTextCommandControl.h"
+#include "SketchTextSettingsTab.h"
 #include "SketchTextHeightTab.h"
 #include "SketchTextPanel.h"
-#include "SketchTextSettingsTab.h"
 
 namespace implicatex {
 	namespace fusion {
@@ -43,16 +43,28 @@ namespace implicatex {
 			return true;
 		}
 
-		bool SketchTextPanel::addSettingsTab(const Ptr<CommandInputs>& inputs, Ptr<CommandInputs>& tabInputs) {
-			//Ptr<SketchTextSettingsTab> settingsTab = 
-			//	inputs->addTabCommandInput(IDS_ITEM_TAB_SETTINGS, 
-			//		LoadStringFromResource(IDS_LABEL_TAB_SETTINGS), IDS_PATH_ICON_SKETCH_TEXT_SETTINGS);
+		bool SketchTextPanel::addSettingsTab(const Ptr<Command>& command) {
+			Ptr<CommandInputs> inputs = command->commandInputs();
+			if (!inputs) {
+				LOG_ERROR("Failed to get command inputs");
+				return false;
+			}
 
-			//tabInputs = settingsTab->children();
-			//if (!tabInputs) {
-			//	LOG_ERROR("Failed to add settings tab command input");
-			//	return false;
-			//}
+			Ptr<TabCommandInput> settingsTab = 
+				inputs->addTabCommandInput(IDS_ITEM_TAB_SETTINGS, 
+					LoadStringFromResource(IDS_LABEL_TAB_SETTINGS), IDS_PATH_ICON_SKETCH_TEXT_SETTINGS);
+
+			if (!settingsTab) {
+				LOG_ERROR("Failed to add settings tab command input");
+				return false;
+			}
+
+			settingsTab_ = std::make_shared<SketchTextSettingsTab>();
+
+            if (!settingsTab_ || !settingsTab_->initialize(command, settingsTab)) {
+                LOG_ERROR("Failed to initialize settings tab command input");
+                return false;
+            }
 
 			return true;
 		}
@@ -80,9 +92,8 @@ namespace implicatex {
 				return;
 			}
 
-			Ptr<CommandInputs> settingsTabInputs = nullptr;
-			if (!toolsApp->sketchTextPanel->addSettingsTab(inputs, settingsTabInputs)) {
-				LOG_ERROR("Failed to add settings tab command input");
+			if (!toolsApp->sketchTextPanel->addSettingsTab(command)) {
+				LOG_ERROR("Failed to add text height tab command input");
 				return;
 			}
 		}

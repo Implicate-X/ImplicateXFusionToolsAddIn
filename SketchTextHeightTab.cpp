@@ -5,6 +5,7 @@
 #include "ToolsApp.h"
 #include "ImplicateXFusionToolsAddIn.h"
 #include "SketchTextCommandControl.h"
+#include "SketchTextSettingsTab.h"
 #include "SketchTextHeightTab.h"
 #include "SketchTextPanel.h"
 
@@ -169,7 +170,7 @@ namespace implicatex {
 					"", 
 					std::to_string(i + 1)
 				);
-				idInput->isEnabled(false); // Nur lesbar
+				idInput->isEnabled(false);
 				tableInput->addCommandInput(idInput, i, 0);
 
 				// Column 2: Text (editable)
@@ -284,19 +285,10 @@ namespace implicatex {
 			if (it != idTextMap.end()) {
 				Ptr<SketchText> sketchText = it->second;
 				if (sketchText) {
-
 					LOG_INFO("Text = " + idTextMap[inputId]->text() + " - SketchText = " + sketchText->text());
 
 					toolsApp->sketchTextPanel->addHighlightGraphics(sketchText);
 					toolsApp->sketchTextPanel->focusCameraOnText(sketchText);
-
-				//for (int i = 0; i < 3; ++i) {
-					//	TextStyles originalStyle = sketchText->textStyle();
-					//	std::this_thread::sleep_for(std::chrono::milliseconds(300)); // 300ms warten
-					//	sketchText->textStyle((TextStyles)(TextStyles::TextStyleBold | TextStyles::TextStyleUnderline));
-					//	std::this_thread::sleep_for(std::chrono::milliseconds(300)); // 300ms warten
-					//	sketchText->textStyle(originalStyle);
-					//}
 				}
 				else {
 					LOG_ERROR("SketchText not found for input ID: " + inputId);
@@ -312,16 +304,18 @@ namespace implicatex {
 				LOG_ERROR("Invalid inputs");
 				return;
 			}
-			Ptr<TabCommandInput> textHeightTab = inputs->itemById(IDS_ITEM_TAB_TEXT_HEIGHT);
-			if (!textHeightTab) {
+
+			std::weak_ptr<SketchTextHeightTab> heightTabTemp = toolsApp->sketchTextPanel->textHeightTab_;
+			auto heightTab = heightTabTemp.lock();
+			if (!heightTab) {
 				LOG_ERROR("Failed to get height tab");
 				return;
 			}
 
-			auto heightTab = toolsApp->sketchTextPanel->textHeightTab_;
-
 			std::vector<Ptr<SketchText>> filteredTexts;
-			if (!heightTab->getTextHeightMatch(inputs, filteredTexts)) {
+			bool isSucceeded = heightTab->getTextHeightMatch(inputs, filteredTexts);
+			if (!isSucceeded) {
+				heightTab.reset();
 				LOG_ERROR("Failed to get text height match");
 				return;
 			}
@@ -329,13 +323,15 @@ namespace implicatex {
 			inputId = std::regex_replace(inputId, std::regex("^TextID_\\d+$"), IDS_CELL_TEXT_ID);
 			inputId = std::regex_replace(inputId, std::regex("^TextValue_\\d+$"), IDS_CELL_TEXT_VALUE);
 			inputId = std::regex_replace(inputId, std::regex("^TextHeight_\\d+$"), IDS_CELL_TEXT_HEIGHT);
-
+			
 			if (heightTab->actions_.find(inputId) != 
 				heightTab->actions_.end()) {
 				heightTab->actions_[inputId](eventArgs);
 			} else {
-				LOG_ERROR("Unknown inputId: " + inputId);
+				LOG_INFO("Unknown inputId: " + inputId);
 			}
+
+			heightTab.reset();
 			return;
 		}
 	}

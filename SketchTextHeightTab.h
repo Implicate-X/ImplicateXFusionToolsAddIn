@@ -7,8 +7,8 @@ namespace implicatex {
 	namespace fusion {
 		#pragma region ActionEvent
 		/// <summary>
-		/// <para>SketchTextPanelInputChangedEventHandler implements the InputChangedEventHandler interface,</para>
-		/// <para>providing to handle input change events by the selected sketch from a dropdown menu.</para>
+		/// <para>SketchTextHeightTabInputChangedEventHandler implements </para>
+		/// <para>the InputChangedEventHandler interface.</para>
 		/// </summary>
 		class SketchTextHeightTabInputChangedEventHandler : public InputChangedEventHandler {
 		public:
