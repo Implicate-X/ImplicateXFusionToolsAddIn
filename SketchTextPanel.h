@@ -19,6 +19,7 @@ namespace implicatex {
 		constexpr auto IDS_ITEM_TEXT_HEIGHT_REPLACE = "textHeightReplace"; // textHeightReplace
 		constexpr auto IDS_ITEM_TEXT_HEIGHT_SEPARATOR = "textHeightSeparator"; // textHeightSeparator
 		constexpr auto IDS_ITEM_TEXT_HEIGHT_MATCH_SEPARATOR = "textHeightMatchSeparator"; // textHeightMatchSeparator
+		constexpr auto IDS_ITEM_TEXT_ZOOM_FACTOR = "textZoomFactor"; // textZoomFactor
 		constexpr auto IDS_PATH_ICON_SKETCH_TEXT = "Resources/Sketch/Text"; // Resources/Sketch/Text
 		constexpr auto IDS_PATH_ICON_SKETCH_TEXT_SETTINGS = "Resources/Sketch/Text/Settings"; // Resources/Sketch/Text/Settings
 		constexpr auto IDS_PATH_ICON_SKETCH_TEXT_HEIGHT = "Resources/Sketch/Text/Height"; // Resources/Sketch/Text/Height

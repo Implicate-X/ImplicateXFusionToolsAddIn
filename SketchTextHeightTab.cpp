@@ -69,6 +69,8 @@ namespace implicatex {
 			replaceButton->resourceFolder(IDS_PATH_ICON_SKETCH_TEXT_HEIGHT);
 
 			command->inputChanged()->add(new SketchTextHeightTabInputChangedEventHandler());
+
+			return true;
 		}
 
 		/// <summary>Adds a sketch drop down to 'dropdown'.</summary>

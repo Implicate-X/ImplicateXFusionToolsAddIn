@@ -1,6 +1,7 @@
 #include "pch.h"
-#include "resource.h"  
+#include "resource.h"
 #include "ResourceHelper.h"
+#include "FileHelper.h"
 #include "ToolsBar.h"
 #include "ToolsApp.h"
 #include "ImplicateXFusionToolsAddIn.h"
@@ -25,31 +26,42 @@ namespace implicatex {
 			}
 
 			Ptr<FloatSliderCommandInput> zoomSlider = 
-				tabInputs->addFloatSliderCommandInput("textZoomSlider", "Text-Zoomfaktor", "mm", 0.1, 5.0, false);
+				tabInputs->addFloatSliderCommandInput(IDS_ITEM_TEXT_ZOOM_FACTOR, 
+					LoadStringFromResource(IDS_LABEL_TEXT_ZOOM_FACTOR), IDS_UNIT_MM, 0.1, 5.0, false);
 			if (!zoomSlider) {
 				LOG_ERROR("Failed to create zoom slider");
 				return false;
 			}
-			zoomSlider->valueOne(1.0);
+
+			ensureUserSettingsDirectoryExists();
+
+			zoomSlider->valueOne(load());
 
 			command->inputChanged()->add(new SketchTextSettingsTabInputChangedEventHandler());
 
 			return true;
 		}
 
-		void saveSettings(double zoomFactor) {
+		void SketchTextSettingsTab::save(double zoomFactor) {
 			json j;
-			j["zoomFactor"] = zoomFactor;
-			std::ofstream file("SketchTextSettings.json");
+			j["SketchText"]["zoomFactor"] = zoomFactor;
+			std::string path = getUserSettingsPath();
+			LOG_INFO("Saving settings to: " + path);
+			std::ofstream file(path);
 			file << j.dump(4);
 		}
 
-		double loadSettings() {
-			std::ifstream file("SketchTextSettings.json");
-			if (!file) return 1.0; // Default-Wert
+		double SketchTextSettingsTab::load() {
+			std::string path = getUserSettingsPath();
+			LOG_INFO("Loading settings from: " + path);
+			std::ifstream file(path);
+			LOG_INFO("File opened: " + std::to_string(file.is_open()));
+			if (!file) return 1.0;
 			json j;
 			file >> j;
-			return j.value("zoomFactor", 1.0);
+			LOG_INFO("File read: " + std::to_string(file.good()));
+			LOG_INFO(j.dump(4));
+			return j.value("SketchText", json{}).value("zoomFactor", 1.0);
 		}
 
 		/// <summary>
@@ -61,7 +73,7 @@ namespace implicatex {
 		/// </param>
 		void SketchTextSettingsTabInputChangedEventHandler::notify(const Ptr<InputChangedEventArgs>& eventArgs) {
 			std::string inputId = eventArgs->input()->id();
-			LOG_INFO("InputChanged: " + inputId);
+			LOG_INFO("SettingsTab InputChanged: " + inputId);
 
 			std::weak_ptr<SketchTextSettingsTab> settingsTabTemp = toolsApp->sketchTextPanel->settingsTab_;
 			auto settingsTab = settingsTabTemp.lock();
@@ -69,32 +81,35 @@ namespace implicatex {
 				LOG_ERROR("Failed to get settings tab");
 				return;
 			}
+
+			while (true)
+			{
+				Ptr<Command> command = eventArgs->input()->parentCommand();
+				if (!command) {
+					LOG_ERROR("Failed to get command from event args");
+					break;
+				}
+				Ptr<CommandInputs> inputs = command->commandInputs();
+				if (!inputs) {
+					LOG_ERROR("Failed to get command inputs from command");
+					break;
+				}
+				Ptr<FloatSliderCommandInput> zoomSlider = inputs->itemById(IDS_ITEM_TEXT_ZOOM_FACTOR);
+				if (!zoomSlider) {
+					LOG_ERROR("Failed to get slider input from command inputs");
+					break;
+				}
+
+				if (eventArgs->input()->id() == IDS_ITEM_TEXT_ZOOM_FACTOR) {
+					double lastZoomFactor = zoomSlider->valueOne();
+					LOG_INFO("Zoomfaktor: " + std::to_string(lastZoomFactor));
+					settingsTab->save(lastZoomFactor);
+				}
+
+				break;
+			}
+
 			settingsTab.reset();
-
-			Ptr<Command> command = eventArgs->input()->parentCommand();
-			if (!command) {
-				LOG_ERROR("Failed to get command from event args");
-				return;
-			}
-			Ptr<CommandInputs> inputs = command->commandInputs();
-			if (!inputs) {
-				LOG_ERROR("Failed to get command inputs from command");
-				return;
-			}
-			Ptr<FloatSliderCommandInput> zoomSlider = inputs->itemById("textZoomSlider");
-			if (!zoomSlider) {
-				LOG_ERROR("Failed to get slider input from command inputs");
-				return;
-			}
-
-			double lastZoomFactor = 1.0;
-
-			zoomSlider->valueOne(lastZoomFactor);
-
-			if (eventArgs->input()->id() == "textZoomSlider") {
-				lastZoomFactor = zoomSlider->valueOne();
-				LOG_INFO("Zoomfaktor: " + std::to_string(lastZoomFactor));
-			}
 		}
 	}
 }

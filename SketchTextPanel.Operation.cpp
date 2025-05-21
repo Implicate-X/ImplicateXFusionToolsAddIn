@@ -369,6 +369,7 @@ namespace implicatex {
 
 			case CameraTypes::PerspectiveCameraType:
 				sketchTextCamera->cameraType(CameraTypes::PerspectiveCameraType);
+				[[fallthrough]];
 
 			case CameraTypes::PerspectiveWithOrthoFacesCameraType:
 				sketchTextCamera->cameraType(CameraTypes::PerspectiveWithOrthoFacesCameraType);

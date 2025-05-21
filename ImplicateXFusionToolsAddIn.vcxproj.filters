@@ -46,6 +46,9 @@
     <ClCompile Include="SketchTextHeightTab.cpp">
       <Filter>SketchText</Filter>
     </ClCompile>
+    <ClCompile Include="FileHelper.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -92,6 +95,9 @@
     </ClInclude>
     <ClInclude Include="SketchTextHeightTab.h">
       <Filter>SketchText</Filter>
+    </ClInclude>
+    <ClInclude Include="FileHelper.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

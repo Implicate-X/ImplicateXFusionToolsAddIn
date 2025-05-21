@@ -21,8 +21,8 @@ namespace implicatex {
 		public:
 			bool initialize(Ptr<Command> command, const Ptr<TabCommandInput>& tabInput);
 
-			void saveSettings(double zoomFactor);
-			double loadSettings();
+			void save(double zoomFactor);
+			double load();
 		};
 	}
 }
