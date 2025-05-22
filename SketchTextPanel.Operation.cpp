@@ -342,7 +342,7 @@ namespace implicatex {
 				pow(maxPoint->z() - minPoint->z(), 2)
 			);
 
-			double zoomFactor = 1.0; // Zoom closer to the text
+			double zoomFactor = settingsTab_->getZoomFactor(); // Zoom closer to the text
 
 			Ptr<Viewport> viewport = toolsApp->activeViewport();
 			if (!viewport) {
@@ -382,8 +382,10 @@ namespace implicatex {
 			sketchTextCamera->target(position);
 			sketchTextCamera->upVector(Vector3D::create(0.0, 1.0, 0.0));
 			sketchTextCamera->isSmoothTransition(true);
-
+			sketchTextCamera->viewOrientation(ViewOrientations::TopViewOrientation);
 			viewport->camera(sketchTextCamera);
+			viewport->setCurrentAsTop();
+			viewport->refresh();
 		}
 
 		/// <summary>

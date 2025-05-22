@@ -21,8 +21,14 @@ namespace implicatex {
 		public:
 			bool initialize(Ptr<Command> command, const Ptr<TabCommandInput>& tabInput);
 
-			void save(double zoomFactor);
+			void save();
 			double load();
+
+			double getZoomFactor() const { return zoomFactor_; }
+			void setZoomFactor(double zoomFactor) { zoomFactor_ = zoomFactor; }
+
+		private:
+			double zoomFactor_;
 		};
 	}
 }

@@ -270,6 +270,14 @@ namespace implicatex {
 			return true;
 		}
 
+		Ptr<SketchText> SketchTextHeightTab::getTextById(const std::string& id) const
+		{
+			auto it = idTextMap_.find(id);
+			if (it != idTextMap_.end())
+				return it->second;
+			return nullptr;
+		}
+
 		/// <summary>
 		/// <para>The notify method is an overridden virtual function that handles input change events.</para>
 		/// </summary>
@@ -288,6 +296,8 @@ namespace implicatex {
 				Ptr<SketchText> sketchText = it->second;
 				if (sketchText) {
 					LOG_INFO("Text = " + idTextMap[inputId]->text() + " - SketchText = " + sketchText->text());
+
+					toolsApp->sketchTextPanel->textHeightTab_->setSelectedText(sketchText);
 
 					toolsApp->sketchTextPanel->addHighlightGraphics(sketchText);
 					toolsApp->sketchTextPanel->focusCameraOnText(sketchText);

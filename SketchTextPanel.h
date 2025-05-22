@@ -64,8 +64,10 @@ namespace implicatex {
 			void focusCameraOnText(const Ptr<SketchText>& sketchText);
 			#pragma endregion
 
+			#pragma region Properties
 			std::shared_ptr<SketchTextSettingsTab> settingsTab_;
 			std::shared_ptr<SketchTextHeightTab> textHeightTab_;
+			#pragma endregion
 		};
 	}
 }

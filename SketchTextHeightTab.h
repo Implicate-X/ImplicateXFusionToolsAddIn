@@ -34,8 +34,20 @@ namespace implicatex {
 			static void textHeightCellSelected(const Ptr<InputChangedEventArgs>& eventArgs);
 			#pragma endregion
 
+			#pragma region Getters
+			Ptr<SketchText> getTextById(const std::string& id) const;
+			Ptr<SketchText> getSelectedText() const { return selectedText_; }
+			#pragma endregion
+
+			#pragma region Setters
+			void setSelectedText(const Ptr<SketchText>& text) { selectedText_ = text; }
+			#pragma endregion
+
 			std::unordered_map<std::string, Ptr<SketchText>> idTextMap_;
 			std::unordered_map<std::string, void(*)(const Ptr<InputChangedEventArgs>& eventArgs)> actions_;
+
+		private:
+			Ptr<SketchText> selectedText_;
 		};
 	}
 }

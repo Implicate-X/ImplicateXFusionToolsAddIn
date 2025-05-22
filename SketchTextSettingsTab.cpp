@@ -27,7 +27,7 @@ namespace implicatex {
 
 			Ptr<FloatSliderCommandInput> zoomSlider = 
 				tabInputs->addFloatSliderCommandInput(IDS_ITEM_TEXT_ZOOM_FACTOR, 
-					LoadStringFromResource(IDS_LABEL_TEXT_ZOOM_FACTOR), IDS_UNIT_MM, 0.1, 5.0, false);
+					LoadStringFromResource(IDS_LABEL_TEXT_ZOOM_FACTOR), IDS_UNIT_MM, 0.5, 50.0, false);
 			if (!zoomSlider) {
 				LOG_ERROR("Failed to create zoom slider");
 				return false;
@@ -42,9 +42,9 @@ namespace implicatex {
 			return true;
 		}
 
-		void SketchTextSettingsTab::save(double zoomFactor) {
+		void SketchTextSettingsTab::save() {
 			json j;
-			j["SketchText"]["zoomFactor"] = zoomFactor;
+			j["SketchText"]["zoomFactor"] = zoomFactor_;
 			std::string path = getUserSettingsPath();
 			LOG_INFO("Saving settings to: " + path);
 			std::ofstream file(path);
@@ -61,7 +61,8 @@ namespace implicatex {
 			file >> j;
 			LOG_INFO("File read: " + std::to_string(file.good()));
 			LOG_INFO(j.dump(4));
-			return j.value("SketchText", json{}).value("zoomFactor", 1.0);
+			zoomFactor_ = j.value("SketchText", json{}).value("zoomFactor", 1.0);
+			return zoomFactor_;
 		}
 
 		/// <summary>
@@ -101,9 +102,10 @@ namespace implicatex {
 				}
 
 				if (eventArgs->input()->id() == IDS_ITEM_TEXT_ZOOM_FACTOR) {
-					double lastZoomFactor = zoomSlider->valueOne();
-					LOG_INFO("Zoomfaktor: " + std::to_string(lastZoomFactor));
-					settingsTab->save(lastZoomFactor);
+					settingsTab->setZoomFactor(zoomSlider->valueOne());
+					LOG_INFO("Zoomfaktor: " + std::to_string(settingsTab->getZoomFactor()));
+					settingsTab->save();
+					toolsApp->sketchTextPanel->focusCameraOnText(toolsApp->sketchTextPanel->textHeightTab_->getSelectedText());
 				}
 
 				break;
