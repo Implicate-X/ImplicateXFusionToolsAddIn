@@ -3,6 +3,7 @@
 #include <memory>
 #endif
 #include "pch.h"
+#include <nlohmann/json.hpp>
 #include "resource.h"
 #include "ImplicateXFusionToolsAddIn.h"
 #include "FileHelper.h"

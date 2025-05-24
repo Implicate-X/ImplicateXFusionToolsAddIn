@@ -1,6 +1,8 @@
 #include "pch.h"
+#include <nlohmann/json.hpp>
 #include "resource.h"
 #include "ResourceHelper.h"
+#include "Logging.h"
 #include "FileHelper.h"
 #include "ToolsBar.h"
 #include "ToolsApp.h"

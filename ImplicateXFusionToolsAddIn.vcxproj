@@ -154,6 +154,7 @@
   <ItemGroup>
     <ClInclude Include="FileHelper.h" />
     <ClInclude Include="ImplicateXFusionToolsAddIn.h" />
+    <ClInclude Include="Logging.h" />
     <ClInclude Include="SketchTextHeightTab.h" />
     <ClInclude Include="SketchTextPanel.h" />
     <ClInclude Include="SketchTextSettingsTab.h" />

@@ -1,6 +1,7 @@
 #include "pch.h"  
 #include "resource.h"  
 #include "ResourceHelper.h"
+#include "Logging.h"
 #include "ToolsBar.h"
 #include "ToolsApp.h"  
 #include "ImplicateXFusionToolsAddIn.h"

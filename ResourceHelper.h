@@ -1,6 +1,5 @@
 #pragma once
 #include <Windows.h>
-#include "PrebuildMacros.h" /// Built by prebuild task: constexpr auto MODULE_NAME = L"ImplicateXFusionToolsAddIn.dll";
 
 namespace implicatex {
     namespace fusion {

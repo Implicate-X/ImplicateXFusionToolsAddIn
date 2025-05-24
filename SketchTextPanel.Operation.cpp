@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "resource.h"  
 #include "ResourceHelper.h"
+#include "Logging.h"
 #include "ToolsBar.h"
 #include "ToolsApp.h"
 #include "ImplicateXFusionToolsAddIn.h"
@@ -377,15 +378,17 @@ namespace implicatex {
 				sketchTextCamera->perspectiveAngle(zoomFactor);
 				break;
 			}
-			
+
 			// Set the camera position (eye) and the target (centerPoint)
 			sketchTextCamera->target(position);
 			sketchTextCamera->upVector(Vector3D::create(0.0, 1.0, 0.0));
 			sketchTextCamera->isSmoothTransition(true);
 			sketchTextCamera->viewOrientation(ViewOrientations::TopViewOrientation);
+
+
 			viewport->camera(sketchTextCamera);
-			viewport->setCurrentAsTop();
-			viewport->refresh();
+			viewport->setCurrentAsHome(false);
+			viewport->goHome(true);
 		}
 
 		/// <summary>

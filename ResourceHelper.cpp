@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "resource.h"
 #include "ImplicateXFusionToolsAddIn.h"
+#include "PrebuildMacros.h" /// Built by prebuild task: constexpr auto MODULE_NAME = L"ImplicateXFusionToolsAddIn.dll";
 #include "ResourceHelper.h"
 
 #define ICU77

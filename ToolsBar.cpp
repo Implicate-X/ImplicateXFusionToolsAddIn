@@ -1,5 +1,7 @@
 #include "pch.h"
-#include "resource.h"  
+#include "resource.h"
+#include "ResourceHelper.h"
+#include "Logging.h"
 #include "ToolsBarPanel.h"
 #include "ToolsBar.h"
 #include "ToolsApp.h"  

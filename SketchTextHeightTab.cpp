@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "resource.h"  
 #include "ResourceHelper.h"
+#include "Logging.h"
 #include "ToolsBar.h"
 #include "ToolsApp.h"
 #include "ImplicateXFusionToolsAddIn.h"
@@ -13,6 +14,9 @@ namespace implicatex {
 	namespace fusion {
 		void MyMouseEventHandler::notify(const Ptr<MouseEventArgs>& eventArgs) {
 			auto viewport = toolsApp->activeViewport();
+			LOG_INFO("MouseEvent: " + //eventArgs->objectType() + " at " +
+				std::to_string(eventArgs->viewportPosition()->x()) + ", " +
+				std::to_string(eventArgs->viewportPosition()->y()));
 			if (viewport) {
 				viewport->refresh();
 			}
