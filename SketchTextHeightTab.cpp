@@ -11,6 +11,13 @@
 
 namespace implicatex {
 	namespace fusion {
+		void MyMouseEventHandler::notify(const Ptr<MouseEventArgs>& eventArgs) {
+			auto viewport = toolsApp->activeViewport();
+			if (viewport) {
+				viewport->refresh();
+			}
+		}
+
 		bool SketchTextHeightTab::initialize(Ptr<Command> command, const Ptr<TabCommandInput>& tabInput) {
 			actions_.insert({ std::string(IDS_ITEM_DROPDOWN_SELECT_SKETCH), &SketchTextHeightTab::dropDownSelected});
 			actions_.insert({ std::string(IDS_ITEM_TEXT_HEIGHT_REPLACE), &SketchTextHeightTab::textHeightReplaced});
@@ -19,6 +26,9 @@ namespace implicatex {
 			actions_.insert({ std::string(IDS_CELL_TEXT_ID), &SketchTextHeightTab::textIdCellSelected });
 			actions_.insert({ std::string(IDS_CELL_TEXT_VALUE), &SketchTextHeightTab::textValueCellSelected });
 			actions_.insert({ std::string(IDS_CELL_TEXT_HEIGHT), &SketchTextHeightTab::textHeightCellSelected });
+
+			Ptr<MouseEvent> mouseMoveEvent = command->mouseMove();
+			mouseMoveEvent->add(new MyMouseEventHandler());
 
 			Ptr<CommandInputs> tabInputs = tabInput->children();
 			if (!tabInputs) {
@@ -159,7 +169,9 @@ namespace implicatex {
 				return false;
 			}
 
-			auto& idTextMap = toolsApp->sketchTextPanel->textHeightTab_->idTextMap_;
+			SketchTextHeightTab* heightTab = toolsApp->sketchTextPanel->getTextHeightTab().get();
+
+			auto& idTextMap = heightTab->idTextMap_;
 
 			idTextMap.clear();
 
@@ -289,7 +301,9 @@ namespace implicatex {
 			std::string inputId = eventArgs->input()->id();
 			LOG_INFO("InputChanged: " + inputId);
 
-			auto& idTextMap = toolsApp->sketchTextPanel->textHeightTab_->idTextMap_;
+			SketchTextHeightTab* heightTab = toolsApp->sketchTextPanel->getTextHeightTab().get();
+
+			auto& idTextMap = heightTab->idTextMap_;
 			
 			auto it = idTextMap.find(inputId);
 			if (it != idTextMap.end()) {
@@ -297,7 +311,7 @@ namespace implicatex {
 				if (sketchText) {
 					LOG_INFO("Text = " + idTextMap[inputId]->text() + " - SketchText = " + sketchText->text());
 
-					toolsApp->sketchTextPanel->textHeightTab_->setSelectedText(sketchText);
+					heightTab->setSelectedText(sketchText);
 
 					toolsApp->sketchTextPanel->addHighlightGraphics(sketchText);
 					toolsApp->sketchTextPanel->focusCameraOnText(sketchText);
@@ -317,17 +331,9 @@ namespace implicatex {
 				return;
 			}
 
-			std::weak_ptr<SketchTextHeightTab> heightTabTemp = toolsApp->sketchTextPanel->textHeightTab_;
-			auto heightTab = heightTabTemp.lock();
-			if (!heightTab) {
-				LOG_ERROR("Failed to get height tab");
-				return;
-			}
-
 			std::vector<Ptr<SketchText>> filteredTexts;
 			bool isSucceeded = heightTab->getTextHeightMatch(inputs, filteredTexts);
 			if (!isSucceeded) {
-				heightTab.reset();
 				LOG_ERROR("Failed to get text height match");
 				return;
 			}
@@ -336,14 +342,13 @@ namespace implicatex {
 			inputId = std::regex_replace(inputId, std::regex("^TextValue_\\d+$"), IDS_CELL_TEXT_VALUE);
 			inputId = std::regex_replace(inputId, std::regex("^TextHeight_\\d+$"), IDS_CELL_TEXT_HEIGHT);
 			
-			if (heightTab->actions_.find(inputId) != 
-				heightTab->actions_.end()) {
-				heightTab->actions_[inputId](eventArgs);
+			if (heightTab->getActions().find(inputId) !=
+				heightTab->getActions().end()) {
+				heightTab->getActions()[inputId](eventArgs);
 			} else {
 				LOG_INFO("Unknown inputId: " + inputId);
 			}
 
-			heightTab.reset();
 			return;
 		}
 	}

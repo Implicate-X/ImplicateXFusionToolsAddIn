@@ -16,14 +16,22 @@ namespace implicatex {
 		};
 		#pragma endregion
 
+		class MyMouseEventHandler : public MouseEventHandler {
+		public:
+			void notify(const Ptr<MouseEventArgs>& eventArgs) override;
+		};
+
 		class SketchTextHeightTab
 		{
 		public:
 			bool initialize(Ptr<Command> command, const Ptr<TabCommandInput>& tabInput);
+
+			#pragma region Design
 			bool addSketchDropDown(const Ptr<CommandInputs>& inputs, Ptr<DropDownCommandInput>& dropdown);
 			bool addTextHeightFilter(const Ptr<CommandInputs>& inputs);
 			bool addTextHeightMatch(const Ptr<CommandInputs>& inputs);
 			bool getTextHeightMatch(const Ptr<CommandInputs>& inputs, std::vector<Ptr<SketchText>>& filteredTexts);
+			#pragma endregion
 
 			#pragma region Action
 			static void dropDownSelected(const Ptr<InputChangedEventArgs>& eventArgs);
@@ -37,17 +45,19 @@ namespace implicatex {
 			#pragma region Getters
 			Ptr<SketchText> getTextById(const std::string& id) const;
 			Ptr<SketchText> getSelectedText() const { return selectedText_; }
+			std::unordered_map<std::string, void(*)(const Ptr<InputChangedEventArgs>& eventArgs)>& getActions() { return actions_; }
 			#pragma endregion
 
 			#pragma region Setters
 			void setSelectedText(const Ptr<SketchText>& text) { selectedText_ = text; }
+			void setActions(const std::unordered_map<std::string, void(*)(const Ptr<InputChangedEventArgs>& eventArgs)>& actions) { actions_ = actions; }
 			#pragma endregion
 
 			std::unordered_map<std::string, Ptr<SketchText>> idTextMap_;
-			std::unordered_map<std::string, void(*)(const Ptr<InputChangedEventArgs>& eventArgs)> actions_;
 
 		private:
 			Ptr<SketchText> selectedText_;
+			std::unordered_map<std::string, void(*)(const Ptr<InputChangedEventArgs>& eventArgs)> actions_;
 		};
 	}
 }

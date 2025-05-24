@@ -42,7 +42,7 @@ namespace implicatex {
 		///
 		/// <param name="eventArgs">The event arguments.</param>
 		void SketchTextHeightTab::textHeightChanged(const Ptr<InputChangedEventArgs>& eventArgs) {
-			LOG_INFO("textHeightChanged");
+			LOG_INFO("SketchTextHeightTab::textHeightChanged");
 
 			Ptr<Command> command = eventArgs->input()->parentCommand();
 			if (!command) {
@@ -54,22 +54,15 @@ namespace implicatex {
 				LOG_ERROR("Invalid inputs");
 				return;
 			}
-			Ptr<TabCommandInput> textHeightTab = inputs->itemById(IDS_ITEM_TAB_TEXT_HEIGHT);
-			if (!textHeightTab) {
-				LOG_ERROR("Failed to get height tab");
-				return;
-			}
 
-			std::weak_ptr<SketchTextHeightTab> heightTabTemp = toolsApp->sketchTextPanel->textHeightTab_;
-			auto heightTab = heightTabTemp.lock();
-			if (!heightTab) {
+			SketchTextHeightTab* heightTab = toolsApp->sketchTextPanel->getTextHeightTab().get();
+			if (heightTab == nullptr) {
 				LOG_ERROR("Failed to get height tab");
 				return;
 			}
 
 			std::vector<Ptr<SketchText>> filteredTexts;
 			bool isSucceeded = heightTab->getTextHeightMatch(inputs, filteredTexts);
-			heightTab.reset();
 			if (!isSucceeded) {
 				LOG_ERROR("Failed to get text height match");
 				return;

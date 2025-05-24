@@ -105,7 +105,9 @@ namespace implicatex {
 					settingsTab->setZoomFactor(zoomSlider->valueOne());
 					LOG_INFO("Zoomfaktor: " + std::to_string(settingsTab->getZoomFactor()));
 					settingsTab->save();
-					toolsApp->sketchTextPanel->focusCameraOnText(toolsApp->sketchTextPanel->textHeightTab_->getSelectedText());
+
+					SketchTextHeightTab* heightTab = toolsApp->sketchTextPanel->getTextHeightTab().get();
+					toolsApp->sketchTextPanel->focusCameraOnText(heightTab->getSelectedText());
 				}
 
 				break;

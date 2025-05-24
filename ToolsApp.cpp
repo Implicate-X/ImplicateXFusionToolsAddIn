@@ -63,20 +63,28 @@ namespace implicatex {
 		/// <para>and logging a termination message when the application is closed.</para>
 		/// </summary>
 		void ToolsApp::terminate() {
-			Ptr<Design> design = activeProduct();
-			Ptr<Component> root = design->rootComponent();
-
-			if (root->customGraphicsGroups()->count() > 0) {
-				for (size_t i = 0; i < root->customGraphicsGroups()->count(); ++i) {
-					Ptr<CustomGraphicsGroup> group = root->customGraphicsGroups()->item(i);
-					if (group) {
-						group->deleteMe();
-					}
+			while (true)
+			{
+				Ptr<Design> design = activeProduct();
+				if (!design) {
+					break;
 				}
-				LOG_INFO("Deleted existing graphics.");
-				toolsApp->activeViewport()->refresh();
+				Ptr<Component> root = design->rootComponent();
+				if (!root) {
+					break;
+				}
+				if (root->customGraphicsGroups()->count() > 0) {
+					for (size_t i = 0; i < root->customGraphicsGroups()->count(); ++i) {
+						Ptr<CustomGraphicsGroup> group = root->customGraphicsGroups()->item(i);
+						if (group) {
+							group->deleteMe();
+						}
+					}
+					LOG_INFO("Deleted existing graphics.");
+					toolsApp->activeViewport()->refresh();
+				}
+				break;
 			}
-
 			removeBar();
 			LOG_INFO(LoadStringFromResource(IDS_MSG_APP_TERMINATED));
 		}
