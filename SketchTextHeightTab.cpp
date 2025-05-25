@@ -12,16 +12,6 @@
 
 namespace implicatex {
 	namespace fusion {
-		void MyMouseEventHandler::notify(const Ptr<MouseEventArgs>& eventArgs) {
-			auto viewport = toolsApp->activeViewport();
-			LOG_INFO("MouseEvent: " + //eventArgs->objectType() + " at " +
-				std::to_string(eventArgs->viewportPosition()->x()) + ", " +
-				std::to_string(eventArgs->viewportPosition()->y()));
-			if (viewport) {
-				viewport->refresh();
-			}
-		}
-
 		bool SketchTextHeightTab::initialize(Ptr<Command> command, const Ptr<TabCommandInput>& tabInput) {
 			actions_.insert({ std::string(IDS_ITEM_DROPDOWN_SELECT_SKETCH), &SketchTextHeightTab::dropDownSelected});
 			actions_.insert({ std::string(IDS_ITEM_TEXT_HEIGHT_REPLACE), &SketchTextHeightTab::textHeightReplaced});
@@ -30,9 +20,6 @@ namespace implicatex {
 			actions_.insert({ std::string(IDS_CELL_TEXT_ID), &SketchTextHeightTab::textIdCellSelected });
 			actions_.insert({ std::string(IDS_CELL_TEXT_VALUE), &SketchTextHeightTab::textValueCellSelected });
 			actions_.insert({ std::string(IDS_CELL_TEXT_HEIGHT), &SketchTextHeightTab::textHeightCellSelected });
-
-			Ptr<MouseEvent> mouseMoveEvent = command->mouseMove();
-			mouseMoveEvent->add(new MyMouseEventHandler());
 
 			Ptr<CommandInputs> tabInputs = tabInput->children();
 			if (!tabInputs) {

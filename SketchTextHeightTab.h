@@ -16,11 +16,6 @@ namespace implicatex {
 		};
 		#pragma endregion
 
-		class MyMouseEventHandler : public MouseEventHandler {
-		public:
-			void notify(const Ptr<MouseEventArgs>& eventArgs) override;
-		};
-
 		class SketchTextHeightTab
 		{
 		public:
