@@ -16,38 +16,41 @@
     <ClCompile Include="ToolsBarPanel.cpp">
       <Filter>Tools</Filter>
     </ClCompile>
-    <ClCompile Include="SketchTextCommandControl.cpp">
-      <Filter>SketchText</Filter>
-    </ClCompile>
     <ClCompile Include="LanguageDropDownControl.cpp">
       <Filter>Language</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="SketchTextPanel.cpp">
-      <Filter>SketchText</Filter>
-    </ClCompile>
     <ClCompile Include="ToolsApp.cpp">
       <Filter>App</Filter>
     </ClCompile>
-    <ClCompile Include="SketchTextPanel.Design.cpp">
-      <Filter>SketchText</Filter>
-    </ClCompile>
-    <ClCompile Include="SketchTextHeightTab.Action.cpp">
-      <Filter>SketchText</Filter>
-    </ClCompile>
-    <ClCompile Include="SketchTextPanel.Operation.cpp">
-      <Filter>SketchText</Filter>
-    </ClCompile>
     <ClCompile Include="SketchTextSettingsTab.cpp">
-      <Filter>Settings</Filter>
-    </ClCompile>
-    <ClCompile Include="SketchTextHeightTab.cpp">
-      <Filter>SketchText</Filter>
+      <Filter>SketchText\Settings</Filter>
     </ClCompile>
     <ClCompile Include="FileHelper.cpp">
       <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="SketchTextHeightTab.Action.cpp">
+      <Filter>SketchText\Height</Filter>
+    </ClCompile>
+    <ClCompile Include="SketchTextHeightTab.cpp">
+      <Filter>SketchText\Height</Filter>
+    </ClCompile>
+    <ClCompile Include="SketchTextPanel.cpp">
+      <Filter>SketchText\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="SketchTextPanel.Design.cpp">
+      <Filter>SketchText\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="SketchTextPanel.Operation.cpp">
+      <Filter>SketchText\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="SketchTextCommandControl.cpp">
+      <Filter>SketchText\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="SketchTextHeightTab.Operation.cpp">
+      <Filter>SketchText\Height</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -69,9 +72,6 @@
     <ClInclude Include="ToolsBarPanel.h">
       <Filter>Tools</Filter>
     </ClInclude>
-    <ClInclude Include="SketchTextCommandControl.h">
-      <Filter>SketchText</Filter>
-    </ClInclude>
     <ClInclude Include="LanguageDropDownControl.h">
       <Filter>Language</Filter>
     </ClInclude>
@@ -84,23 +84,26 @@
     <ClInclude Include="Symbols.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="SketchTextPanel.h">
-      <Filter>SketchText</Filter>
-    </ClInclude>
     <ClInclude Include="ToolsApp.h">
       <Filter>App</Filter>
     </ClInclude>
     <ClInclude Include="SketchTextSettingsTab.h">
-      <Filter>Settings</Filter>
-    </ClInclude>
-    <ClInclude Include="SketchTextHeightTab.h">
-      <Filter>SketchText</Filter>
+      <Filter>SketchText\Settings</Filter>
     </ClInclude>
     <ClInclude Include="FileHelper.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="Logging.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="SketchTextHeightTab.h">
+      <Filter>SketchText\Height</Filter>
+    </ClInclude>
+    <ClInclude Include="SketchTextPanel.h">
+      <Filter>SketchText\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="SketchTextCommandControl.h">
+      <Filter>SketchText\Panel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -125,8 +128,14 @@
     <Filter Include="SketchText">
       <UniqueIdentifier>{4d05f090-02ad-4a01-8153-20a174b95845}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Settings">
+    <Filter Include="SketchText\Settings">
       <UniqueIdentifier>{ce0afde5-194f-4cb7-8373-c9fdd49c7349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SketchText\Height">
+      <UniqueIdentifier>{3a653979-221f-4027-aa0b-b0031391869c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SketchText\Panel">
+      <UniqueIdentifier>{5c71a457-08b7-4e83-ae76-f6086c221022}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

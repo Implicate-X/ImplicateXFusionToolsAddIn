@@ -26,6 +26,7 @@ namespace implicatex {
 		constexpr auto IDS_CELL_TEXT_ID = "textIdCell"; // textIdCell
 		constexpr auto IDS_CELL_TEXT_VALUE = "textValueCell"; // textValueCell
 		constexpr auto IDS_CELL_TEXT_HEIGHT = "textHeightCell"; // textHeightCell
+		constexpr auto IDS_CELL_TEXT_TOGGLE = "textToggleCell"; // textToggleCell
 		constexpr auto IDS_UNIT_MM = "mm"; // Millimeters
 		#pragma endregion
 
@@ -64,10 +65,10 @@ namespace implicatex {
 			void focusCameraOnText(const Ptr<SketchText>& sketchText);
 			#pragma endregion
 
-#pragma region Getters
+			#pragma region Getters
             //Ptr<SketchTextSettingsTab> getSettingsTab() const { return Ptr<SketchTextSettingsTab>(settingsTab_.get()); }
 			std::shared_ptr<SketchTextHeightTab> getTextHeightTab() const { return textHeightTab_; }
-#pragma endregion
+			#pragma endregion
 		public:
 			#pragma region Properties
 			std::shared_ptr<SketchTextSettingsTab> settingsTab_;

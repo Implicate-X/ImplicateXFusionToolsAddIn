@@ -114,6 +114,7 @@
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
     </ClCompile>
     <ClCompile Include="SketchTextHeightTab.cpp" />
+    <ClCompile Include="SketchTextHeightTab.Operation.cpp" />
     <ClCompile Include="SketchTextPanel.Operation.cpp" />
     <ClCompile Include="SketchTextPanel.cpp" />
     <ClCompile Include="SketchTextPanel.Design.cpp" />

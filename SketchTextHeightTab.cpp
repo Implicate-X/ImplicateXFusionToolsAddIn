@@ -20,6 +20,9 @@ namespace implicatex {
 			actions_.insert({ std::string(IDS_CELL_TEXT_ID), &SketchTextHeightTab::textIdCellSelected });
 			actions_.insert({ std::string(IDS_CELL_TEXT_VALUE), &SketchTextHeightTab::textValueCellSelected });
 			actions_.insert({ std::string(IDS_CELL_TEXT_HEIGHT), &SketchTextHeightTab::textHeightCellSelected });
+			actions_.insert({ std::string(IDS_CELL_TEXT_TOGGLE), &SketchTextHeightTab::textToggleCellSelected });
+
+			textValueCellInput_ = nullptr;
 
 			Ptr<CommandInputs> tabInputs = tabInput->children();
 			if (!tabInputs) {
@@ -43,7 +46,7 @@ namespace implicatex {
 
 			tabInputs->addSeparatorCommandInput(IDS_ITEM_TEXT_HEIGHT_MATCH_SEPARATOR);
 
-			if (!addTextHeightMatch(tabInputs)) {
+			if (!addTextHeightMatchTable(tabInputs)) {
 				LOG_ERROR("Failed to add text size match");
 				return false;
 			}
@@ -135,7 +138,7 @@ namespace implicatex {
 		/// <param name="inputs">The inputs.</param>
 		///
 		/// <returns>True if it succeeds, false if it fails.</returns>
-		bool SketchTextHeightTab::addTextHeightMatch(const Ptr<CommandInputs>& inputs) {
+		bool SketchTextHeightTab::addTextHeightMatchTable(const Ptr<CommandInputs>& inputs) {
 			Ptr<TextBoxCommandInput> textHeightMatch = 
 				inputs->addTextBoxCommandInput(IDS_ITEM_TEXT_HEIGHT_MATCH, 
 					LoadStringFromResource(IDS_LABEL_TEXT_HEIGHT_MATCH), "", 1, true);
@@ -144,21 +147,26 @@ namespace implicatex {
 				return false;
 			}
 			std::vector<Ptr<SketchText>> filteredTexts;
-			if (!getTextHeightMatch(inputs, filteredTexts)) {
+			if (!getTextHeightMatchItems(inputs, filteredTexts)) {
 				LOG_ERROR("Failed to get text size match");
 				return false;
 			}
 			Ptr<TableCommandInput> tableInput = 
 				inputs->addTableCommandInput( IDS_ITEM_TEXT_HEIGHT_TABLE, 
 				LoadStringFromResource(IDS_LABEL_TEXT_HEIGHT_TABLE), 
-				3, // Anzahl der Spalten
-				"1:3:1" // Spaltenverhältnis: ID, Text, Höhe
+				4, // Anzahl der Spalten
+				"1:4:2:1" // Spaltenverhältnis: ID, Text, Höhe, Toggle
 			);
 
 			if (!tableInput) {
 				LOG_ERROR("Failed to add TableCommandInput");
 				return false;
 			}
+
+			tableInput->hasGrid(false);
+			tableInput->tablePresentationStyle(TablePresentationStyles::itemBorderTablePresentationStyle);
+			tableInput->columnSpacing(1);
+			tableInput->rowSpacing(1);
 
 			SketchTextHeightTab* heightTab = toolsApp->sketchTextPanel->getTextHeightTab().get();
 
@@ -169,178 +177,37 @@ namespace implicatex {
 			for (int i = 0; i < (int)filteredTexts.size(); ++i) {
 				Ptr<SketchText> text = filteredTexts[i];
 
-				// Column 1: ID (readonly)
+				// Column 1: ID
 				Ptr<StringValueCommandInput> idInput = inputs->addStringValueInput(
-					"TextID_" + std::to_string(i), 
-					"", 
-					std::to_string(i + 1)
-				);
-				idInput->isEnabled(false);
+					std::format("{}_{}", IDS_CELL_TEXT_ID, i+1), "", std::to_string(i+1));
+				idInput->isReadOnly(true);
 				tableInput->addCommandInput(idInput, i, 0);
 
-				// Column 2: Text (editable)
-				std::string textValueId = "TextValue_" + std::to_string(i);
+				// Column 2: Text
 				Ptr<StringValueCommandInput> textInput = inputs->addStringValueInput(
-					textValueId, 
-					"", 
-					text->text()
-				);
+					std::format("{}_{}", IDS_CELL_TEXT_VALUE, i+1),	"",  text->text());
+				textInput->isReadOnly(true);
 				tableInput->addCommandInput(textInput, i, 1);
 
-				// Column 3: Height (editable)
-				std::string textHeightId = "TextHeight_" + std::to_string(i);
-				Ptr<ValueCommandInput> heightInput = inputs->addValueInput(
-					textHeightId, 
-					"", 
-					IDS_UNIT_MM, 
-					ValueInput::createByReal(text->height())
-				);
+				// Column 3: Height
+				double heightCm = text->height();
+				double heightMm = heightCm * 10.0;
+				std::ostringstream heightString;
+				heightString << std::fixed << std::setprecision(2) << heightMm << " " << IDS_UNIT_MM;
+				Ptr<StringValueCommandInput> heightInput = inputs->addStringValueInput(
+					std::format("{}_{}", IDS_CELL_TEXT_HEIGHT, i+1), "", heightString.str()	);
+				heightInput->isReadOnly(true);
 				tableInput->addCommandInput(heightInput, i, 2);
 
-				idTextMap[textValueId] = text;
-				idTextMap[textHeightId] = text;
+				// Column 4: Toggle (checkbox)
+				Ptr<BoolValueCommandInput> toggleInput = inputs->addBoolValueInput(
+					std::format("{}_{}", IDS_CELL_TEXT_TOGGLE, i+1), "", true, "", false);
+				tableInput->addCommandInput(toggleInput, i, 3);
+
+				idTextMap[std::to_string(i)] = text;
 			}
 
 			return true;
-		}
-
-		/// <summary>
-		/// <para>getTextSizeMatch retrieves and filters sketch texts based on specified minimum and maximum height,</para>
-		/// <para>updating a command input with the count of matching texts.</para>
-		/// </summary>
-		///
-		/// <param name="inputs">
-		/// <para>is a constant reference to a smart pointer of type adsk::core::CommandInputs, </para>
-		/// <para>which is typically used to manage command input parameters in the Autodesk Fusion 360 API.</para>
-		/// </param>
-		///
-		/// <returns>True if it succeeds, false if it fails.</returns>
-		bool SketchTextHeightTab::getTextHeightMatch(const Ptr<CommandInputs>& inputs, std::vector<Ptr<SketchText>>& filteredTexts) {
-			Ptr<ValueCommandInput> minTextHeight = inputs->itemById(IDS_ITEM_TEXT_HEIGHT_MIN);
-			Ptr<ValueCommandInput> maxTextHeight = inputs->itemById(IDS_ITEM_TEXT_HEIGHT_MAX);
-			Ptr<TextBoxCommandInput> matchesTextHeightInput = inputs->itemById(IDS_ITEM_TEXT_HEIGHT_MATCH);
-			Ptr<DropDownCommandInput> dropdown = inputs->itemById(IDS_ITEM_DROPDOWN_SELECT_SKETCH);
-
-			Ptr<Sketch> sketch = nullptr;
-			if (!toolsApp->sketchTextPanel->getSelectedSketch(dropdown, sketch)) {
-				LOG_ERROR("Failed to get selected sketch");
-				return false;
-			}
-
-			double minHeightValue = minTextHeight->value();
-			double maxHeightValue = maxTextHeight->value();
-
-			Ptr<SketchTexts> sketchTexts = sketch->sketchTexts();
-			if (!sketchTexts) {
-				LOG_ERROR("No SketchTexts found in the sketch.");
-				return false;
-			}
-
-			for (size_t i = 0; i < sketchTexts->count(); ++i) {
-				Ptr<SketchText> text = sketchTexts->item(i);
-				Ptr<Point3D> minPoint = text->boundingBox()->minPoint();
-				Ptr<Point3D> maxPoint = text->boundingBox()->maxPoint();
-				if (!minPoint || !maxPoint) {
-					LOG_ERROR("Failed to get bounding box points");
-					return false;
-				}
-
-				Ptr<Point3D> center = Point3D::create(
-					(minPoint->x() + maxPoint->x()) / 2.0,
-					(minPoint->y() + maxPoint->y()) / 2.0,
-					(minPoint->z() + maxPoint->z()) / 2.0
-				);
-
-				LOG_INFO("Min: " + std::to_string(minPoint->x()) + ", " + std::to_string(minPoint->y()) + ", " + std::to_string(minPoint->z()));
-				LOG_INFO("Max: " + std::to_string(maxPoint->x()) + ", " + std::to_string(maxPoint->y()) + ", " + std::to_string(maxPoint->z()));
-				LOG_INFO("Center: " + std::to_string(center->x()) + ", " + std::to_string(center->y()) + ", " + std::to_string(center->z()));
-
-				if (text) {
-					double textHeight = text->height();
-					if (textHeight >= minHeightValue && textHeight <= maxHeightValue) {
-						filteredTexts.push_back(text);
-					}
-				}
-			}
-
-			size_t textHeightMatchCount = filteredTexts.size();
-
-			matchesTextHeightInput->text(std::to_string(textHeightMatchCount));
-
-			//for (const auto& text : filteredTexts) {
-			//	TRACE("Filtered Text: " + text->text());
-			//}
-			return true;
-		}
-
-		Ptr<SketchText> SketchTextHeightTab::getTextById(const std::string& id) const
-		{
-			auto it = idTextMap_.find(id);
-			if (it != idTextMap_.end())
-				return it->second;
-			return nullptr;
-		}
-
-		/// <summary>
-		/// <para>The notify method is an overridden virtual function that handles input change events.</para>
-		/// </summary>
-		/// <param name="eventArgs">
-		/// <para>is a constant reference to a pointer of type InputChangedEventArgs, </para>
-		/// <para>which is typically used to handle input change events.</para>
-		/// </param>
-		void SketchTextHeightTabInputChangedEventHandler::notify(const Ptr<InputChangedEventArgs>& eventArgs) {
-			std::string inputId = eventArgs->input()->id();
-			LOG_INFO("InputChanged: " + inputId);
-
-			SketchTextHeightTab* heightTab = toolsApp->sketchTextPanel->getTextHeightTab().get();
-
-			auto& idTextMap = heightTab->idTextMap_;
-			
-			auto it = idTextMap.find(inputId);
-			if (it != idTextMap.end()) {
-				Ptr<SketchText> sketchText = it->second;
-				if (sketchText) {
-					LOG_INFO("Text = " + idTextMap[inputId]->text() + " - SketchText = " + sketchText->text());
-
-					heightTab->setSelectedText(sketchText);
-
-					toolsApp->sketchTextPanel->addHighlightGraphics(sketchText);
-					toolsApp->sketchTextPanel->focusCameraOnText(sketchText);
-				}
-				else {
-					LOG_ERROR("SketchText not found for input ID: " + inputId);
-				}
-			}
-			Ptr<Command> command = eventArgs->input()->parentCommand();
-			if (!command) {
-				LOG_ERROR("Invalid command");
-				return;
-			}
-			Ptr<CommandInputs> inputs = command->commandInputs();
-			if (!inputs) {
-				LOG_ERROR("Invalid inputs");
-				return;
-			}
-
-			std::vector<Ptr<SketchText>> filteredTexts;
-			bool isSucceeded = heightTab->getTextHeightMatch(inputs, filteredTexts);
-			if (!isSucceeded) {
-				LOG_ERROR("Failed to get text height match");
-				return;
-			}
-
-			inputId = std::regex_replace(inputId, std::regex("^TextID_\\d+$"), IDS_CELL_TEXT_ID);
-			inputId = std::regex_replace(inputId, std::regex("^TextValue_\\d+$"), IDS_CELL_TEXT_VALUE);
-			inputId = std::regex_replace(inputId, std::regex("^TextHeight_\\d+$"), IDS_CELL_TEXT_HEIGHT);
-			
-			if (heightTab->getActions().find(inputId) !=
-				heightTab->getActions().end()) {
-				heightTab->getActions()[inputId](eventArgs);
-			} else {
-				LOG_INFO("Unknown inputId: " + inputId);
-			}
-
-			return;
 		}
 	}
 }
