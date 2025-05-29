@@ -174,37 +174,39 @@ namespace implicatex {
 
 			idTextMap.clear();
 
-			for (int i = 0; i < (int)filteredTexts.size(); ++i) {
-				Ptr<SketchText> text = filteredTexts[i];
+			for (unsigned int row = 0; row < (unsigned int)filteredTexts.size(); ++row) {
+				unsigned int key = row + 1;
+
+				Ptr<SketchText> sketchText = filteredTexts[row];
 
 				// Column 1: ID
 				Ptr<StringValueCommandInput> idInput = inputs->addStringValueInput(
-					std::format("{}_{}", IDS_CELL_TEXT_ID, i+1), "", std::to_string(i+1));
+					std::format("{}_{}", IDS_CELL_TEXT_ID, key), "", std::to_string(key));
 				idInput->isReadOnly(true);
-				tableInput->addCommandInput(idInput, i, 0);
+				tableInput->addCommandInput(idInput, row, 0);
 
 				// Column 2: Text
 				Ptr<StringValueCommandInput> textInput = inputs->addStringValueInput(
-					std::format("{}_{}", IDS_CELL_TEXT_VALUE, i+1),	"",  text->text());
+					std::format("{}_{}", IDS_CELL_TEXT_VALUE, key),	"",  sketchText->text());
 				textInput->isReadOnly(true);
-				tableInput->addCommandInput(textInput, i, 1);
+				tableInput->addCommandInput(textInput, row, 1);
 
 				// Column 3: Height
-				double heightCm = text->height();
+				double heightCm = sketchText->height();
 				double heightMm = heightCm * 10.0;
 				std::ostringstream heightString;
 				heightString << std::fixed << std::setprecision(2) << heightMm << " " << IDS_UNIT_MM;
 				Ptr<StringValueCommandInput> heightInput = inputs->addStringValueInput(
-					std::format("{}_{}", IDS_CELL_TEXT_HEIGHT, i+1), "", heightString.str()	);
+					std::format("{}_{}", IDS_CELL_TEXT_HEIGHT, key), "", heightString.str()	);
 				heightInput->isReadOnly(true);
-				tableInput->addCommandInput(heightInput, i, 2);
+				tableInput->addCommandInput(heightInput, row, 2);
 
 				// Column 4: Toggle (checkbox)
 				Ptr<BoolValueCommandInput> toggleInput = inputs->addBoolValueInput(
-					std::format("{}_{}", IDS_CELL_TEXT_TOGGLE, i+1), "", true, "", false);
-				tableInput->addCommandInput(toggleInput, i, 3);
+					std::format("{}_{}", IDS_CELL_TEXT_TOGGLE, key), "", true, "", false);
+				tableInput->addCommandInput(toggleInput, row, 3);
 
-				idTextMap[std::to_string(i)] = text;
+				idTextMap[key] = sketchText;
 			}
 
 			return true;

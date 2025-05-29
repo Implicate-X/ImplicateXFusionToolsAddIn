@@ -41,8 +41,8 @@ namespace implicatex {
 
 			#pragma region Getters
 			static SketchTextHeightTab* get();
-			Ptr<SketchText> getTextById(const std::string& id) const;
-			Ptr<SketchText> getTextById(const int id) const;
+			unsigned int getSelectedRowNumber(std::string& inputId);
+			Ptr<SketchText> getTextById(const unsigned int id) const;
 			Ptr<SketchText> getSelectedText() const { return selectedText_; }
 			const std::string& getPendingTextValue() const { return pendingTextValue_; }
 			Ptr<StringValueCommandInput> getTextValueCellInput() const { return textValueCellInput_; }
@@ -56,7 +56,7 @@ namespace implicatex {
 			void setActions(const std::unordered_map<std::string, void(*)(const Ptr<InputChangedEventArgs>& eventArgs)>& actions) { actions_ = actions; }
 			#pragma endregion
 
-			std::unordered_map<std::string, Ptr<SketchText>> idTextMap_;
+			std::unordered_map<unsigned int, Ptr<SketchText>> idTextMap_;
 
 		private:
 			std::string pendingTextValue_;

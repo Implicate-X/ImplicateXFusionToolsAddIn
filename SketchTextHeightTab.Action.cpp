@@ -77,27 +77,42 @@ namespace implicatex {
 
 		void SketchTextHeightTab::textValueCellSelected(const Ptr<InputChangedEventArgs>& eventArgs) {
 			LOG_INFO("textValueCellSelected");
+			SketchTextHeightTab::get()->localizeText(eventArgs);
+
 		}
 
 		void SketchTextHeightTab::textHeightCellSelected(const Ptr<InputChangedEventArgs>& eventArgs) {
 			LOG_INFO("textHeightCellSelected");
+			SketchTextHeightTab::get()->localizeText(eventArgs);
+
 		}
 
 		void SketchTextHeightTab::textToggleCellSelected(const Ptr<InputChangedEventArgs>& eventArgs) {
 			LOG_INFO("textToggleCellSelected");
+			SketchTextHeightTab::get()->localizeText(eventArgs);
+
 		}
 
 		void SketchTextHeightTab::localizeText(const Ptr<InputChangedEventArgs>& eventArgs) {
 			std::string inputId = eventArgs->input()->id();
 			LOG_INFO("localizeText InputChanged: " + inputId);
 
+			unsigned int selectedRow = getSelectedRowNumber(inputId);
+
+			if (selectedRow == 0) {
+				LOG_ERROR("Invalid selected row: " + std::to_string(selectedRow));
+				return;
+			}
+
+			LOG_INFO("Selected Row = " + std::to_string(selectedRow));
+
 			auto& idTextMap = idTextMap_;
-			
-			auto it = idTextMap.find(inputId);
+
+			auto it = idTextMap.find(selectedRow);
 			if (it != idTextMap.end()) {
 				Ptr<SketchText> sketchText = it->second;
 				if (sketchText) {
-					LOG_INFO("Text = " + idTextMap[inputId]->text() + " - SketchText = " + sketchText->text());
+					LOG_INFO("Text = " + idTextMap[selectedRow]->text() + " - SketchText = " + sketchText->text());
 
 					setSelectedText(sketchText);
 
@@ -132,53 +147,53 @@ namespace implicatex {
 				return;
 			}
 
-			int selectedRow = -1;
-			std::smatch match;
-			std::string expression = 
-				std::format("^({}|{}|{}|{})_(\\d+)$", IDS_CELL_TEXT_ID, IDS_CELL_TEXT_VALUE, IDS_CELL_TEXT_HEIGHT, IDS_CELL_TEXT_TOGGLE);
+			//int selectedRow = -1;
+			//std::smatch match;
+			//std::string expression = 
+			//	std::format("^({}|{}|{}|{})_(\\d+)$", IDS_CELL_TEXT_ID, IDS_CELL_TEXT_VALUE, IDS_CELL_TEXT_HEIGHT, IDS_CELL_TEXT_TOGGLE);
 
-			if (std::regex_match(inputId, match, std::regex(expression))) {
-				selectedRow = std::stoi(match[2]);
-			}
-			LOG_INFO("Selected Row: " + std::to_string(selectedRow));
+			//if (std::regex_match(inputId, match, std::regex(expression))) {
+			//	selectedRow = std::stoi(match[2]);
+			//}
+			//LOG_INFO("Selected Row: " + std::to_string(selectedRow));
 
-			if (selectedRow <= 0) {
-				LOG_ERROR("Invalid selected row: " + std::to_string(selectedRow));
-				return;
-			}
+			//if (selectedRow <= 0) {
+			//	LOG_ERROR("Invalid selected row: " + std::to_string(selectedRow));
+			//	return;
+			//}
 
-			SketchTextHeightTab* heightTab = SketchTextHeightTab::get();
+			//SketchTextHeightTab* heightTab = SketchTextHeightTab::get();
 
-			if (heightTab->getTextValueCellInput() != nullptr) {
-				if (!heightTab->getTextValueCellInput()->isReadOnly()) {
-					LOG_INFO("TextValueCellInput changed: " + inputId);
-					Ptr<SketchText> sketchText = heightTab->getTextById(selectedRow-1);
-					if (!sketchText) {
-						LOG_ERROR("SketchText not found for inputId: " + inputId);
-						return;
-					}
-					//sketchText->text(heightTab->getTextValueCellInput()->value());
-				}
+			//if (heightTab->getTextValueCellInput() != nullptr) {
+			//	if (!heightTab->getTextValueCellInput()->isReadOnly()) {
+			//		LOG_INFO("TextValueCellInput changed: " + inputId);
+			//		Ptr<SketchText> sketchText = heightTab->getTextById(selectedRow-1);
+			//		if (!sketchText) {
+			//			LOG_ERROR("SketchText not found for inputId: " + inputId);
+			//			return;
+			//		}
+			//		//sketchText->text(heightTab->getTextValueCellInput()->value());
+			//	}
 
-				heightTab->getTextValueCellInput()->isReadOnly(true);
-			}
+			//	heightTab->getTextValueCellInput()->isReadOnly(true);
+			//}
 
 
-			if (inputId.find(IDS_CELL_TEXT_VALUE) != std::string::npos) {
-				Ptr<StringValueCommandInput> textInput = inputs->itemById(inputId);
-				if (textInput) {
-					heightTab->setPendingTextValue(textInput->value());
-				}
-				textInput->isReadOnly(false);
-				heightTab->setTextValueCellInput(textInput);
-			}
+			//if (inputId.find(IDS_CELL_TEXT_VALUE) != std::string::npos) {
+			//	Ptr<StringValueCommandInput> textInput = inputs->itemById(inputId);
+			//	if (textInput) {
+			//		heightTab->setPendingTextValue(textInput->value());
+			//	}
+			//	textInput->isReadOnly(false);
+			//	heightTab->setTextValueCellInput(textInput);
+			//}
 
-			Ptr<TableCommandInput> tableInput =
-				inputs->itemById(IDS_ITEM_TEXT_HEIGHT_TABLE);
-			if (!tableInput) {
-				LOG_ERROR("TableCommandInput not found: " + IDS_ITEM_TEXT_HEIGHT_TABLE);
-				return;
-			}
+			//Ptr<TableCommandInput> tableInput =
+			//	inputs->itemById(IDS_ITEM_TEXT_HEIGHT_TABLE);
+			//if (!tableInput) {
+			//	LOG_ERROR("TableCommandInput not found: " + IDS_ITEM_TEXT_HEIGHT_TABLE);
+			//	return;
+			//}
 
 			//int selectedRow = tableInput->selectedRow();
 			//if (selectedRow < 0) {
@@ -200,19 +215,19 @@ namespace implicatex {
 			//	return;
 			//}
 
-			//inputId = std::regex_replace(inputId, std::regex("^TextID_\\d+$"), IDS_CELL_TEXT_ID);
-			//inputId = std::regex_replace(inputId, std::regex("^TextValue_\\d+$"), IDS_CELL_TEXT_VALUE);
-			//inputId = std::regex_replace(inputId, std::regex("^TextHeight_\\d+$"), IDS_CELL_TEXT_HEIGHT);
-			//inputId = std::regex_replace(inputId, std::regex("^TextToggle_\\d+$"), IDS_CELL_TEXT_TOGGLE);
-			//
-			//SketchTextHeightTab* heightTab = toolsApp->sketchTextPanel->getTextHeightTab().get();
+			inputId = 
+				std::regex_replace(inputId,
+					std::regex(std::format("^({}|{}|{}|{})_(\\d+)$", 
+						IDS_CELL_TEXT_ID, IDS_CELL_TEXT_VALUE, IDS_CELL_TEXT_HEIGHT, IDS_CELL_TEXT_TOGGLE)), "$1");
+            
+			SketchTextHeightTab* heightTab = toolsApp->sketchTextPanel->getTextHeightTab().get();
 
-			//if (heightTab->getActions().find(inputId) !=
-			//	heightTab->getActions().end()) {
-			//	heightTab->getActions()[inputId](eventArgs);
-			//} else {
-			//	LOG_INFO("Unknown inputId: " + inputId);
-			//}
+			if (heightTab->getActions().find(inputId) !=
+				heightTab->getActions().end()) {
+				heightTab->getActions()[inputId](eventArgs);
+			} else {
+				LOG_INFO("Unknown inputId: " + inputId);
+			}
 
 			return;
 		}

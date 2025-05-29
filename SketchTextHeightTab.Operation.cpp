@@ -81,17 +81,25 @@ namespace implicatex {
 			return true;
 		}
 
-		Ptr<SketchText> SketchTextHeightTab::getTextById(const std::string& id) const
+		unsigned int SketchTextHeightTab::getSelectedRowNumber(std::string& inputId) {
+			unsigned int selectedRow = 0;
+			std::smatch match;
+			std::string expression = 
+				std::format("^({}|{}|{}|{})_(\\d+)$", IDS_CELL_TEXT_ID, IDS_CELL_TEXT_VALUE, IDS_CELL_TEXT_HEIGHT, IDS_CELL_TEXT_TOGGLE);
+
+			if (std::regex_match(inputId, match, std::regex(expression))) {
+				selectedRow = std::stoi(match[2]);
+			}
+
+			return selectedRow;
+		}
+
+		Ptr<SketchText> SketchTextHeightTab::getTextById(const unsigned int id) const
 		{
 			auto it = idTextMap_.find(id);
 			if (it != idTextMap_.end())
 				return it->second;
 			return nullptr;
-		}
-
-		Ptr<SketchText> SketchTextHeightTab::getTextById(const int id) const {
-			
-			return getTextById(std::to_string(id));
 		}
 
 		SketchTextHeightTab* SketchTextHeightTab::get() { 
