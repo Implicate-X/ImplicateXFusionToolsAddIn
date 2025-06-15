@@ -48,7 +48,7 @@ namespace implicatex {
 			json j;
 			j["SketchText"]["zoomFactor"] = zoomFactor_;
 			std::string path = getUserSettingsPath();
-			LOG_INFO("Saving settings to: " + path);
+			//NOLOG: LOG_INFO("Saving settings to: " + path);
 			std::ofstream file(path);
 			file << j.dump(4);
 		}
@@ -57,12 +57,12 @@ namespace implicatex {
 			std::string path = getUserSettingsPath();
 			LOG_INFO("Loading settings from: " + path);
 			std::ifstream file(path);
-			LOG_INFO("File opened: " + std::to_string(file.is_open()));
+			//NOLOG: LOG_INFO("File opened: " + std::to_string(file.is_open()));
 			if (!file) return 1.0;
 			json j;
 			file >> j;
-			LOG_INFO("File read: " + std::to_string(file.good()));
-			LOG_INFO(j.dump(4));
+			//NOLOG: LOG_INFO("File read: " + std::to_string(file.good()));
+			//NOLOG: LOG_INFO(j.dump(4));
 			zoomFactor_ = j.value("SketchText", json{}).value("zoomFactor", 1.0);
 			return zoomFactor_;
 		}

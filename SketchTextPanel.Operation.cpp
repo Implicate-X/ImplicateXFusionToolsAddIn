@@ -457,9 +457,9 @@ namespace implicatex {
 				centerZ = startPoint->z();
 			}
 
-			LOG_INFO("BoundingBox Min: (" + std::to_string(minX) + ", " + std::to_string(minY) + ")");
-			LOG_INFO("BoundingBox Max: (" + std::to_string(maxX) + ", " + std::to_string(maxY) + ")");
-			LOG_INFO("BoundingBox Center: (" + std::to_string(centerX) + ", " + std::to_string(centerY) + ")");
+			//NOLOG: LOG_INFO("BoundingBox Min: (" + std::to_string(minX) + ", " + std::to_string(minY) + ")");
+			//NOLOG: LOG_INFO("BoundingBox Max: (" + std::to_string(maxX) + ", " + std::to_string(maxY) + ")");
+			//NOLOG: LOG_INFO("BoundingBox Center: (" + std::to_string(centerX) + ", " + std::to_string(centerY) + ")");
 
 			Ptr<Design> design = toolsApp->activeProduct();
 			Ptr<Component> root = design->rootComponent();
